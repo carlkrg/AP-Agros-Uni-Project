@@ -19,9 +19,18 @@ class Group01:
     """
 
     def get_countries(self) -> list:
+        """
+        Returns a list of available countries in the dataset.
+
+        If the dataframe is not available, the method will first call the `get_data` method to download and
+        read the dataset into the `df` attribute. Then it returns a list of unique countries in the 'Entity' column.
+
+        Returns:
+            A list of available countries in the dataset.
+        """
         if self.df is None:
-            self.get_data()
-        return self.df["Entity"].unique().tolist()
+            self.get_data() #check if df is available
+        return self.df["Entity"].unique().tolist() #return all countries in a list
 
     """
     Develop a third method that plots a way to correlate the "_quantity" columns.
