@@ -6,10 +6,12 @@ class Group01:
         self.name = name
 
     '''
-    Develop a first method that receives a filename argument and returns a pandas DataFrame.
+    This method will download the data file into a downloads/ directory in the root directory of the project (main project directory). If the data file already exists, the method will not download it again.
+    This method must also read the dataset into a pandas dataframe which is an attribute of your class.
     '''
-    def get_data(self) -> str:
-        print('hi' + name)
+    def get_data(self):
+        print(f"Hello, {self.name}!")
+    
 
     '''
     Develop a second method that outputs a list of the available countries in the data set.
