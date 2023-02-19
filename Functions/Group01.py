@@ -72,8 +72,8 @@ class Group01:
             A list of available countries in the dataset.
         """
         if self.df is None:
-            self.get_data() #check if df is available
-        return self.df["Entity"].unique().tolist() #return all countries in a list
+            self.get_data()  # check if df is available
+        return self.df["Entity"].unique().tolist()  # return all countries in a list
 
     """
     Develop a third method that plots a way to correlate the "_quantity" columns.
