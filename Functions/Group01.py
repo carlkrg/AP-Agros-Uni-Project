@@ -1,22 +1,56 @@
 import pandas as pd
+import requests
+import os
 
 class Group01:
 
     def __init__(self, name: str):
         self.name = name
+        self.df = None
 
     '''
     This method will download the data file into a downloads/ directory in the root directory of the project (main project directory). If the data file already exists, the method will not download it again.
     This method must also read the dataset into a pandas dataframe which is an attribute of your class.
     '''
     def get_data(self):
-        print(f"Hello, {self.name}!")
+
+        URL = "https://raw.githubusercontent.com/owid/owid-datasets/master/datasets/Agricultural%20total%20factor%20productivity%20(USDA)/Agricultural%20total%20factor%20productivity%20(USDA).csv"
+
+        if (os.path.exists('downloads')): # check if the downloads directory exists
+            print("downloads directory already exists")
+        else:
+            print("creating downloads directory...")
+            os.mkdir('downloads') # create a downloads directory
+
+        if (os.path.exists("downloads/data.csv")): # check if the data file exists
+            print("data file already exists")
+        else:
+            print("downloading data file...")
+            try:
+                response = requests.get(URL) # get the data from url    
+            except Exception as e:
+                print("Error: unable to download data file")
+                print(e)
+                return; # exit the method
+
+            print("saving data into file ... downloads/data.cs")
+            open("downloads/data.csv", "w").write(response.text) # write the data to a csv file
+
+        if self.df is None:
+            print("reading data file into pandas dataframe...")
+            self.df = pd.read_csv("downloads/data.csv") # read the data into a pandas dataframe
+
+
+        
+        
+
     
 
     '''
     Develop a second method that outputs a list of the available countries in the data set.
     '''
-    def get_countries(df: pd.DataFrame) -> list:
+    def get_countries(self) -> list:
+        self.df
         pass;
 
     '''
