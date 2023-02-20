@@ -1,7 +1,8 @@
 import pandas as pd
 import requests
 import os
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 
 class Group01:
     def __init__(self, name: str):
@@ -75,27 +76,32 @@ class Group01:
             self.get_data()  # check if df is available
         return self.df["Entity"].unique().tolist()  # return all countries in a list
 
-    """
-    Develop a third method that plots a way to correlate the "_quantity" columns.
-    """
 
-    def quantity_corr(self, df: pd.DataFrame) -> None:
-        pass
+    def plot_quantity(self):
+        """Plot a heatmap of the correlation between all the columns in the Pandas DataFrame that end with the string '_quantity'.
+
+        If the DataFrame does not exist as an attribute of the class instance, the method calls the 'get_data()' method to obtain the data.
+
+        The method creates an empty list called 'plotted_columns', and loops through each column in the DataFrame, checking if the column name ends with the string '_quantity'. If a column name ends with '_quantity', the name is appended to the 'plotted_columns' list.
+
+        Finally, the method calls the 'heatmap()' function from the seaborn library on the 'plotted_columns' data in the DataFrame, and displays the heatmap plot using 'plt.show()'.
+        """
+        if self.df is None:
+            self.get_data()
+
+        plotted_columns = []
+
+        for column in self.df.columns:
+            if column.endswith("_quantity"):
+                plotted_columns.append(column)
+
+        sns.heatmap(self.df[plotted_columns].corr())
+        plt.show()
+
 
     """
-    Develop a fourth method that plots an area chart of the distinct "_output_" columns. 
-    This method should have two arguments: a country argument and a normalize argument. 
-    The former, when receiving NONE or 'World' should plot the sum for all distinct countries. 
-    The latter, if True, normalizes the consumption in relative terms: each year, consumption should always be 100%. The X-axis should be the Year. 
-    The method should return a ValueError when the chosen country does not exist.
-    """
-
-    def plot_area_chart(self, country: str, normalize: bool) -> None:
-        pass
-
-    """
-    Develop a fifth method that may receive a string with a country or a list of country strings. 
-    This method should compare the total of the "_output_" columns for each of the chosen countries and plot it, so a comparison can be made. 
+    Develop a fifth method that may receive a string with a country or a list of country strings.
+    This method should compare the total of the "_output_" columns for each of the chosen countries and plot it, so a comparison can be made.
     The X-axis should be the Year.
     """
 
@@ -111,9 +117,9 @@ class Group01:
             raise ValueError("Please pass a country or countries")
 
     """
-    Develop a sixth method that must be called gapminder. This is a reference to the famous gapminder tools. 
-    This method should receive an argument year which must be an int. If the received argument is not an int, the method should raise a TypeError. 
-    This method should plot a scatter plot where x is fertilizer_quantity, y is output_quantity, 
+    Develop a sixth method that must be called gapminder. This is a reference to the famous gapminder tools.
+    This method should receive an argument year which must be an int. If the received argument is not an int, the method should raise a TypeError.
+    This method should plot a scatter plot where x is fertilizer_quantity, y is output_quantity,
     and the area of each dot should be a third relevant variable you find with exploration of the data.
     """
 
