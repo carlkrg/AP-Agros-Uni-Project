@@ -121,6 +121,19 @@ class Group01:
     """
 
     def plot_area_chart(self, country: str, normalize: bool) -> None:
+        """
+        Plots an area chart of the distinct "_output_" columns for the given country.
+
+        If the dataframe is not available, the method will first call the `get_data` method to download and
+        read the dataset into the `df` attribute. 
+
+        Raises:
+            Exception: If one or less columns with the "_output_" suffix are available or if the given country does not exist
+
+        Returns:
+            An area chart of the distinct "_output_" columns for the given country.
+        """
+        
         
         if self.df is None:
             self.get_data()  # check if df is available
@@ -128,26 +141,36 @@ class Group01:
         columnNames = self.df.columns.tolist()
         dfSubset = [c for c in columnNames if "_output_" in c]
         dfSubset.append("Year")
+        
+      
+        def country_plot(dfTemp):
+            norm = ""
+            if normalize:
+                dfTemp["Total"] = (dfTemp.iloc[:,:-1]).sum(axis=1)
+                dfTemp.iloc[:,:-2] = dfTemp.iloc[:,:-2].div(dfTemp.Total, axis=0)*100
+                norm = "% (Normalized)"
+            for each in dfSubset[:-1]:
+                plt.fill_between(dfTemp.Year, dfTemp[each], alpha=0.4)
+                plt.plot(dfTemp.Year, dfTemp[each], label=each, alpha=0.4)
+            plt.legend(loc='upper left', bbox_to_anchor=(1, 1))   
+            plt.tick_params(labelsize=12)
+            plt.xlabel('Year', size=12)
+            plt.ylabel(('Counsumption'+norm), size=12)
+            plt.ylim(bottom=0)
+            plt.show()
 
-        if (country == None) | (country == "World"):
-            dfTemp = self.df[dfSubset]
-            #dfTemp = dfTemp.sum(axis=1)
-            for each in dfSubset[:-1]:
-                if normalize: 
-                    dfTemp[each] = dfTemp[each]/dfTemp.groupby("Year")[each].transform(sum)
-                dfTemp.plot(kind='area', x='Year', y=each)
-                plt.show()
-        elif country in self.get_countries():
-            dfTemp = self.df[self.df["Entity"] == country]
-            dfTemp = dfTemp[dfSubset]
-            #dfTemp = dfTemp.sum(axis=1)
-            for each in dfSubset[:-1]:
-                if normalize: 
-                    dfTemp[each] = dfTemp[each]/dfTemp.groupby("Year")[each].transform(sum)
-                dfTemp.plot(kind='area', x='Year', y=each)
-                plt.show()
+        if len(columnNames) < 1:
+            raise Exception("Not enough columns with '_output' suffix")
         else:
-            raise ValueError("Country does not exist")
+            if (country == None) | (country == "World"):
+                dfTemp = self.df[dfSubset]
+                country_plot(dfTemp)
+            elif country in self.get_countries():
+                dfTemp = self.df[self.df["Entity"] == country]
+                dfTemp = dfTemp[dfSubset]
+                country_plot(dfTemp)
+            else:
+                raise ValueError("Country does not exist")
 
 
         
