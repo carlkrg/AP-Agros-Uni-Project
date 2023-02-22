@@ -1,3 +1,4 @@
+from matplotlib import pyplot as plt
 import pandas as pd
 import requests
 import os
@@ -99,16 +100,59 @@ class Group01:
     The X-axis should be the Year.
     """
 
-    def plot_area_chart(self, country: str = None, countries: list = None) -> None:
-        if country & countries:  # pass a string
-            raise ValueError("Please pass a country or countries")
 
-        elif country:  # pass a string
-            pass
-        elif countries:  # pass a list
-            pass
+    """
+    Develop a fifth method that may receive a string with a country or a list of country strings. 
+    This method should compare the total of the "_output_" columns for each of the chosen countries and plot it, so a comparison can be made. 
+    The X-axis should be the Year.
+    """
+    def plot_country_chart(self, args:list) -> None:
+        """
+        Plots the total of the _output_ values of each selected country on the same chart with the X-axis being the Year.
+
+        Raises:
+            Exception: If the input is not a string or a list of strings
+
+        Returns:
+            None.
+        """
+        title = "Plot of total _output_ values of "
+        
+        if self.df is None:
+            self.get_data()  # check if df is available
+        # Get all columns with "_output" 
+        columnNames = self.df.columns.tolist()
+        dfSubset = [c for c in columnNames if "_output_" in c]
+        dfSubset.append("Year")
+
+        def country_plot(country):
+            dfTemp = self.df[self.df["Entity"] == country]
+            dfTemp = dfTemp[dfSubset]
+            dfTemp["Total"] = (dfTemp[:-1]).sum(axis=1)
+            plt.plot(dfTemp["Year"], dfTemp['Total'], label=country)
+            plt.legend()
+            
+            
+
+        if isinstance(args, str):  # pass a string
+            if args in self.get_countries():
+                country_plot(args)
+                title += args
+            else:
+                raise ValueError("Country does not exist")
+        elif all(isinstance(each, str) for each in args):  # list
+            for each in args:
+                if each in self.get_countries():
+                    country_plot(each)
+                    title += each + ", "
+                else:
+                    raise ValueError("Country does not exist")
         else:
-            raise ValueError("Please pass a country or countries")
+            raise ValueError("Please pass a country string or countries list")
+
+        plt.title(title)
+        plt.show()
+
 
     """
     Develop a sixth method that must be called gapminder. This is a reference to the famous gapminder tools. 
