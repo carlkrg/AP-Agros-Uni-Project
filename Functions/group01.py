@@ -1,6 +1,9 @@
 import pandas as pd
 import requests
 import os
+import matplotlib.pyplot as plt
+import seaborn as sns
+
 
 
 class Group01:
@@ -79,8 +82,35 @@ class Group01:
     Develop a third method that plots a way to correlate the "_quantity" columns.
     """
 
-    def quantity_corr(self, df: pd.DataFrame) -> None:
-        pass
+    def quantity_corr(self) -> None:
+        """
+        Returns a correlation list of the "_quantity" columns in the given dataframe and plots a correlation plot.
+
+        If the dataframe is not available, the method will first call the `get_data` method to download and
+        read the dataset into the `df` attribute. Then it returns a correlation list of the "_quantity" columns.
+
+        Raises:
+            Exception: If one or less columns with the "_quantity" suffix are available
+
+        Returns:
+            A correlation list of the "_quantity" columns.
+        """
+        
+        if self.df is None:
+            self.get_data()  # check if df is available
+        # Get all columns with "_quantity" suffix
+        columnNames = self.df.columns.tolist()
+        dfSubset = [c for c in columnNames if "_quantity" in c]
+
+        if len(dfSubset) <= 1:
+            raise Exception("Not enough columns with '_quantity' suffix")
+        else:
+            # Subset the dataframe into only those columns with the "_quantity" suffix
+            dfTemp = self.df[dfSubset]
+            sns.heatmap(dfTemp.corr())
+            plt.show()
+        #dfTemp.corr().style.background_gradient(cmap='coolwarm').set_precision(2)
+
 
     """
     Develop a fourth method that plots an area chart of the distinct "_output_" columns. 
@@ -91,7 +121,36 @@ class Group01:
     """
 
     def plot_area_chart(self, country: str, normalize: bool) -> None:
-        pass
+        
+        if self.df is None:
+            self.get_data()  # check if df is available
+        # Get all columns with "_quantity" suffix
+        columnNames = self.df.columns.tolist()
+        dfSubset = [c for c in columnNames if "_output_" in c]
+        dfSubset.append("Year")
+
+        if (country == None) | (country == "World"):
+            dfTemp = self.df[dfSubset]
+            #dfTemp = dfTemp.sum(axis=1)
+            for each in dfSubset[:-1]:
+                if normalize: 
+                    dfTemp[each] = dfTemp[each]/dfTemp.groupby("Year")[each].transform(sum)
+                dfTemp.plot(kind='area', x='Year', y=each)
+                plt.show()
+        elif country in self.get_countries():
+            dfTemp = self.df[self.df["Entity"] == country]
+            dfTemp = dfTemp[dfSubset]
+            #dfTemp = dfTemp.sum(axis=1)
+            for each in dfSubset[:-1]:
+                if normalize: 
+                    dfTemp[each] = dfTemp[each]/dfTemp.groupby("Year")[each].transform(sum)
+                dfTemp.plot(kind='area', x='Year', y=each)
+                plt.show()
+        else:
+            raise ValueError("Country does not exist")
+
+
+        
 
     """
     Develop a fifth method that may receive a string with a country or a list of country strings. 
@@ -99,10 +158,9 @@ class Group01:
     The X-axis should be the Year.
     """
 
-    def plot_area_chart(self, country: str = None, countries: list = None) -> None:
-        if country & countries:  # pass a string
+    def plot_country_area_chart(self, country: str = None, countries: list = None) -> None:
+        if country & countries:  # if both are passed raise an error
             raise ValueError("Please pass a country or countries")
-
         elif country:  # pass a string
             pass
         elif countries:  # pass a list
