@@ -234,3 +234,4 @@ $RECYCLE.BIN/
 
 # Project specific folders and files to ignore
 downloads/  # Downloaded files
+Testing/  # Testing files

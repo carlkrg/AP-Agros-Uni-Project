@@ -1,8 +1,10 @@
+from matplotlib import pyplot as plt
 import pandas as pd
 import requests
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
+
 
 class Group01:
     def __init__(self, name: str):
@@ -58,7 +60,6 @@ class Group01:
                 "downloads/data.csv"
             )  # read the data into a pandas dataframe
 
-
     def get_countries(self) -> list:
         """
         Returns a list of available countries in the dataset.
@@ -72,7 +73,6 @@ class Group01:
         if self.df is None:
             self.get_data()  # check if df is available
         return self.df["Entity"].unique().tolist()  # return all countries in a list
-
 
     def plot_quantity(self):
         """Plot a heatmap of the correlation between all the columns in the Pandas DataFrame that end with the string '_quantity'.
@@ -95,13 +95,12 @@ class Group01:
         sns.heatmap(self.df[plotted_columns].corr())
         plt.show()
 
-
     def plot_area_chart(self, country: str, normalize: bool) -> None:
         """
         Plots an area chart of the distinct "_output_" columns for the given country.
 
         If the dataframe is not available, the method will first call the `get_data` method to download and
-        read the dataset into the `df` attribute. 
+        read the dataset into the `df` attribute.
 
         Raises:
             Exception: If one or less columns with the "_output_" suffix are available or if the given country does not exist
@@ -109,29 +108,29 @@ class Group01:
         Returns:
             An area chart of the distinct "_output_" columns for the given country.
         """
-        
-        
+
         if self.df is None:
             self.get_data()  # check if df is available
         # Get all columns with "_quantity" suffix
         columnNames = self.df.columns.tolist()
         dfSubset = [c for c in columnNames if "_output_" in c]
         dfSubset.append("Year")
-        
-      
+
         def country_plot(dfTemp):
             norm = ""
             if normalize:
-                dfTemp["Total"] = (dfTemp.iloc[:,:-1]).sum(axis=1)
-                dfTemp.iloc[:,:-2] = dfTemp.iloc[:,:-2].div(dfTemp.Total, axis=0)*100
+                dfTemp["Total"] = (dfTemp.iloc[:, :-1]).sum(axis=1)
+                dfTemp.iloc[:, :-2] = (
+                    dfTemp.iloc[:, :-2].div(dfTemp.Total, axis=0) * 100
+                )
                 norm = "% (Normalized)"
             for each in dfSubset[:-1]:
                 plt.fill_between(dfTemp.Year, dfTemp[each], alpha=0.4)
                 plt.plot(dfTemp.Year, dfTemp[each], label=each, alpha=0.4)
-            plt.legend(loc='upper left', bbox_to_anchor=(1, 1))   
+            plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
             plt.tick_params(labelsize=12)
-            plt.xlabel('Year', size=12)
-            plt.ylabel(('Counsumption'+norm), size=12)
+            plt.xlabel("Year", size=12)
+            plt.ylabel(("Counsumption" + norm), size=12)
             plt.ylim(bottom=0)
             plt.show()
 
@@ -148,24 +147,50 @@ class Group01:
             else:
                 raise ValueError("Country does not exist")
 
+    def plot_country_chart(self, args: list) -> None:
+        """
+        Plots the total of the _output_ values of each selected country on the same chart with the X-axis being the Year.
 
-        
+        Raises:
+            Exception: If the input is not a string or a list of strings
 
-    """
-    Develop a fifth method that may receive a string with a country or a list of country strings. 
-    This method should compare the total of the "_output_" columns for each of the chosen countries and plot it, so a comparison can be made. 
-    The X-axis should be the Year.
-    """
+        Returns:
+            None.
+        """
+        title = "Plot of total _output_ values of "
 
-    def plot_country_area_chart(self, country: str = None, countries: list = None) -> None:
-        if country & countries:  # if both are passed raise an error
-            raise ValueError("Please pass a country or countries")
-        elif country:  # pass a string
-            pass
-        elif countries:  # pass a list
-            pass
+        if self.df is None:
+            self.get_data()  # check if df is available
+        # Get all columns with "_output"
+        columnNames = self.df.columns.tolist()
+        dfSubset = [c for c in columnNames if "_output_" in c]
+        dfSubset.append("Year")
+
+        def country_plot(country):
+            dfTemp = self.df[self.df["Entity"] == country]
+            dfTemp = dfTemp[dfSubset]
+            dfTemp["Total"] = (dfTemp[:-1]).sum(axis=1)
+            plt.plot(dfTemp["Year"], dfTemp["Total"], label=country)
+            plt.legend()
+
+        if isinstance(args, str):  # pass a string
+            if args in self.get_countries():
+                country_plot(args)
+                title += args
+            else:
+                raise ValueError("Country does not exist")
+        elif all(isinstance(each, str) for each in args):  # list
+            for each in args:
+                if each in self.get_countries():
+                    country_plot(each)
+                    title += each + ", "
+                else:
+                    raise ValueError("Country does not exist")
         else:
-            raise ValueError("Please pass a country or countries")
+            raise ValueError("Please pass a country string or countries list")
+
+        plt.title(title)
+        plt.show()
 
     """
     Develop a sixth method that must be called gapminder. This is a reference to the famous gapminder tools.
