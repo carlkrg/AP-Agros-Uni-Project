@@ -16,7 +16,7 @@ class Group01:
 
     def __init__(self, name: str):
         """
-        Initialize the object with the given name.       
+        Initialize the object with the given name.
 
         Args:
            name (str): The name of the object.
@@ -129,7 +129,7 @@ class Group01:
         """
 
         if self.df is None:
-            self.get_data()  
+            self.get_data()
 
         # Get all columns with "_quantity" suffix and check if there are enough columns
         column_names = self.df.columns.tolist()
@@ -137,7 +137,6 @@ class Group01:
         df_subset.append("Year")
         if len(df_subset) < 2:
             raise Exception("Not enough columns with '_output' suffix")
-
 
         # Plotting function
         def country_plot(df_temp):
@@ -215,13 +214,6 @@ class Group01:
         plt.title(title)
         plt.show()
 
-    """
-    Develop a sixth method that must be called gapminder. This is a reference to the famous gapminder tools.
-    This method should receive an argument year which must be an int. If the received argument is not an int, the method should raise a TypeError.
-    This method should plot a scatter plot where x is fertilizer_quantity, y is output_quantity,
-    and the area of each dot should be a third relevant variable you find with exploration of the data.
-    """
-  
     def gapminder(self, year: int) -> None:
         """
         Visualize Gapminder data for a specific year.
@@ -244,31 +236,39 @@ class Group01:
         """
         if not isinstance(year, int) or year < 0:
             raise TypeError("Please pass a positive integer for year")
-        
+
         if self.df is None:
             self.get_data()  # check if df is available
-        
-        if year not in self.df['Year'].unique():
+
+        if year not in self.df["Year"].unique():
             raise ValueError(f"{year} is not present in the dataset")
-        
+
         # Increase the graph size
         plt.figure(dpi=150)
 
         # Filter data by year
-        year_data = self.df[self.df['Year'] == year]
+        year_data = self.df[self.df["Year"] == year]
 
         # Store animal_output_quantity as a numpy array: np_pop
         # Exploratory analysis showed that animal_output_quantity is the most relevant variable
         # regarding their correlation with fertilizer_quantity and output_quantity
-        np_pop = np.array(year_data['animal_output_quantity'])
+        np_pop = np.array(year_data["animal_output_quantity"])
         np_pop2 = np_pop * 2
-        
+
         # Create a scatter plot
-        sns.scatterplot(x='fertilizer_quantity', y='output_quantity', data=year_data, legend=False, size=np_pop2, sizes=(20, 400), alpha=0.5)
+        sns.scatterplot(
+            x="fertilizer_quantity",
+            y="output_quantity",
+            data=year_data,
+            legend=False,
+            size=np_pop2,
+            sizes=(20, 400),
+            alpha=0.5,
+        )
 
         # Use seaborn scatterplot for better customization
         plt.grid(True)
-        plt.xlabel('fertilizer_quantity', fontsize=14)
-        plt.ylabel('output_quantity', fontsize=14)
-        plt.title('Gapminder agriculture', fontsize=20)
+        plt.xlabel("fertilizer_quantity", fontsize=14)
+        plt.ylabel("output_quantity", fontsize=14)
+        plt.title("Gapminder agriculture", fontsize=20)
         plt.show()
