@@ -1,23 +1,38 @@
-from matplotlib import pyplot as plt
 import pandas as pd
 import requests
 import numpy as np
 import os
-import matplotlib.pyplot as plt
 import seaborn as sns
+from matplotlib import pyplot as plt
 
 
 class Group01:
+    """
+    A class representing agricultural output of several countries.
+
+    Attributes:
+        name (str): The name of the object.
+    """
+
     def __init__(self, name: str):
+        """
+        Initialize the object with the given name.       
+
+        Args:
+           name (str): The name of the object.
+        """
         self.name = name
         self.df = None
 
     def get_data(self):
         """
-        This method downloads a CSV file containing agricultural total factor productivity data from this Github repository
-        (https://github.com/owid/owid-datasets/tree/master/datasets) and saves it into a downloads/ directory in the root directory of the project (main project directory).
-         If the data file already exists, the method does not download it again. The method also reads the dataset into a pandas DataFrame, which is stored as an attribute of the class.
-         If the DataFrame already exists (i.e., has already been loaded), the method does not reload it.
+        This method downloads a CSV file containing agricultural total factor productivity data from
+        this Github repository (https://github.com/owid/owid-datasets/tree/master/datasets) and
+        saves it into a downloads/ directory in the root directory of the project (main project
+        directory). If the data file already exists, the method does not download it again. The
+        method also reads the dataset into a pandas DataFrame, which is stored as an attribute of
+        the class. If the DataFrame already exists (i.e., has already been loaded), the method does
+        not reload it.
 
         Returns:
             None
@@ -65,8 +80,9 @@ class Group01:
         """
         Returns a list of available countries in the dataset.
 
-        If the dataframe is not available, the method will first call the `get_data` method to download and
-        read the dataset into the `df` attribute. Then it returns a list of unique countries in the 'Entity' column.
+        If the dataframe is not available, the method will first call the `get_data` method to
+        download and read the dataset into the `df` attribute. Then it returns a list of unique
+        countries in the 'Entity' column.
 
         Returns:
             A list of available countries in the dataset.
@@ -76,7 +92,8 @@ class Group01:
         return self.df["Entity"].unique().tolist()  # return all countries in a list
 
     def plot_quantity(self):
-        """Plot a heatmap of the correlation between all the columns in the Pandas DataFrame that end with the string '_quantity'.
+        """
+        Plots a heatmap of the correlation between all the columns in the Pandas DataFrame that end with the string '_quantity'.
 
         If the DataFrame does not exist as an attribute of the class instance, the method calls the 'get_data()' method to obtain the data.
 
@@ -100,34 +117,40 @@ class Group01:
         """
         Plots an area chart of the distinct "_output_" columns for the given country.
 
-        If the dataframe is not available, the method will first call the `get_data` method to download and
-        read the dataset into the `df` attribute.
+        If the dataframe is not available, the method will first call the `get_data` method to
+        download and read the dataset into the `df` attribute.
 
         Raises:
-            Exception: If one or less columns with the "_output_" suffix are available or if the given country does not exist
+            Exception: If one or less columns with the "_output_" suffix are available or if the
+            given country does not exist
 
         Returns:
             An area chart of the distinct "_output_" columns for the given country.
         """
 
         if self.df is None:
-            self.get_data()  # check if df is available
-        # Get all columns with "_quantity" suffix
-        columnNames = self.df.columns.tolist()
-        dfSubset = [c for c in columnNames if "_output_" in c]
-        dfSubset.append("Year")
+            self.get_data()  
 
-        def country_plot(dfTemp):
+        # Get all columns with "_quantity" suffix and check if there are enough columns
+        column_names = self.df.columns.tolist()
+        df_subset = [c for c in column_names if "_output_" in c]
+        df_subset.append("Year")
+        if len(df_subset) < 2:
+            raise Exception("Not enough columns with '_output' suffix")
+
+
+        # Plotting function
+        def country_plot(df_temp):
             norm = ""
             if normalize:
-                dfTemp["Total"] = (dfTemp.iloc[:, :-1]).sum(axis=1)
-                dfTemp.iloc[:, :-2] = (
-                    dfTemp.iloc[:, :-2].div(dfTemp.Total, axis=0) * 100
+                df_temp["Total"] = (df_temp.iloc[:, :-1]).sum(axis=1)
+                df_temp.iloc[:, :-2] = (
+                    df_temp.iloc[:, :-2].div(df_temp.Total, axis=0) * 100
                 )
                 norm = "% (Normalized)"
-            for each in dfSubset[:-1]:
-                plt.fill_between(dfTemp.Year, dfTemp[each], alpha=0.4)
-                plt.plot(dfTemp.Year, dfTemp[each], label=each, alpha=0.4)
+            for each in df_subset[:-1]:
+                plt.fill_between(df_temp.Year, df_temp[each], alpha=0.4)
+                plt.plot(df_temp.Year, df_temp[each], label=each, alpha=0.4)
             plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
             plt.tick_params(labelsize=12)
             plt.xlabel("Year", size=12)
@@ -135,22 +158,21 @@ class Group01:
             plt.ylim(bottom=0)
             plt.show()
 
-        if len(columnNames) < 1:
-            raise Exception("Not enough columns with '_output' suffix")
+        # Plotting for all countries or a specific country
+        if (country is None) | (country == "World"):
+            df_temp = self.df[df_subset]
+            country_plot(df_temp)
+        elif country in self.get_countries():
+            df_temp = self.df[self.df["Entity"] == country]
+            df_temp = df_temp[df_subset]
+            country_plot(df_temp)
         else:
-            if (country == None) | (country == "World"):
-                dfTemp = self.df[dfSubset]
-                country_plot(dfTemp)
-            elif country in self.get_countries():
-                dfTemp = self.df[self.df["Entity"] == country]
-                dfTemp = dfTemp[dfSubset]
-                country_plot(dfTemp)
-            else:
-                raise ValueError("Country does not exist")
+            raise ValueError("Country does not exist")
 
     def plot_country_chart(self, args: list) -> None:
         """
-        Plots the total of the _output_ values of each selected country on the same chart with the X-axis being the Year.
+        Plots the total of the _output_ values of each selected country on the same chart with the
+        X-axis being the Year.
 
         Raises:
             Exception: If the input is not a string or a list of strings
@@ -163,15 +185,15 @@ class Group01:
         if self.df is None:
             self.get_data()  # check if df is available
         # Get all columns with "_output"
-        columnNames = self.df.columns.tolist()
-        dfSubset = [c for c in columnNames if "_output_" in c]
-        dfSubset.append("Year")
+        column_names = self.df.columns.tolist()
+        df_subset = [c for c in column_names if "_output_" in c]
+        df_subset.append("Year")
 
         def country_plot(country):
-            dfTemp = self.df[self.df["Entity"] == country]
-            dfTemp = dfTemp[dfSubset]
-            dfTemp["Total"] = (dfTemp[:-1]).sum(axis=1)
-            plt.plot(dfTemp["Year"], dfTemp["Total"], label=country)
+            df_temp = self.df[self.df["Entity"] == country]
+            df_temp = df_temp[df_subset]
+            df_temp["Total"] = (df_temp[:-1]).sum(axis=1)
+            plt.plot(df_temp["Year"], df_temp["Total"], label=country)
             plt.legend()
 
         if isinstance(args, str):  # pass a string
