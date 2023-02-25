@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import pandas as pd
 import requests
+import numpy as np
 import os
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -199,8 +200,60 @@ class Group01:
     and the area of each dot should be a third relevant variable you find with exploration of the data.
     """
 
-    def gapminder(self, year: int, df: pd.DataFrame) -> None:
+    def gapminder(self, year: int) -> None:
+        """
+        Visualize Gapminder data for a specific year.
+
+        Parameters
+        ----------
+        year : int
+            The year for which to visualize the data.
+
+        Raises
+        ------
+        TypeError
+            If the received argument is not an int.
+
+        Returns
+        -------
+        None
+        """
+        
+        if self.df is None:
+            self.get_data()  # check if df is available
+        
         if isinstance(year, int):
-            pass
+            # Increase the graph size
+            plt.figure(dpi=150)
+
+            # Filter data by year
+            year_data = self.df[self.df['Year'] == year]
+
+            # Store population as a numpy array: np_pop
+            np_pop = np.array(year_data['animal_output_quantity'])
+            np_pop2 = np_pop * 2
+            
+            #Let's change the opacity 
+            #sns.scatterplot(test_obj.df['fertilizer_quantity'], test_obj.df['output_quantity'], hue = test_obj.df['Entity'], legend = False, 
+            #                size=np_pop2, sizes=(20,500), alpha = 0.8)
+            #sns.scatterplot(x='fertilizer_quantity', y='output_quantity', hue=year_data['Entity'], data=self.df, legend=True, size=np_pop2, sizes=(20,500), alpha=0.8)
+            sns.scatterplot(x= 'fertilizer_quantity', y= 'output_quantity', hue='Entity', data=year_data, legend=False, size=np_pop2, sizes=(20,400), alpha=0.8)
+            
+            #sns.scatterplot(year_data['fertilizer_quantity'], year_data['output_quantity'], hue=year_data['Entity'], legend=True, size=np_pop2, sizes=(20,400), alpha=0.8)
+
+            # Use seaborn scatterplot for better customization
+
+            plt.grid(True)
+            plt.xscale('log')
+            plt.xlabel('fertilizer_quantity', fontsize = 14)
+            plt.ylabel('output_quantity', fontsize = 14)
+            plt.title('Gapminder agriculture', fontsize = 20)
+            #plt.xticks([1000, 10000, 100000],['1k', '10k', '100k'])
+            #Add description to the biggest countries
+            #plt.text(1550, 67, 'India')
+            #plt.text(5650, 75, 'China')
+
+            
         else:
-            raise ValueError("Please pass an integer")
+            raise TypeError("Please pass an integer for year")
+        plt.show()
