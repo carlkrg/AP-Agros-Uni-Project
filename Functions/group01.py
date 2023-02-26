@@ -100,19 +100,31 @@ class Group01:
         The method creates an empty list called 'plotted_columns', and loops through each column in the DataFrame, checking if the column name ends with the string '_quantity'. If a column name ends with '_quantity', the name is appended to the 'plotted_columns' list.
 
         Finally, the method calls the 'heatmap()' function from the seaborn library on the 'plotted_columns' data in the DataFrame, and displays the heatmap plot using 'plt.show()'.
+
+        Returns:
+            None
         """
+        # Check if self.df exists
         if self.df is None:
             self.get_data()
 
         plotted_columns = []
 
+        # Loop through each column in the DataFrame
         for column in self.df.columns:
+            # Check if the column name ends with '_quantity'
             if column.endswith("_quantity"):
+                # Append the column name to the plotted_columns list
                 plotted_columns.append(column)
 
+        # Set the plot size and font scale
         plt.figure(figsize=(10, 8))
         sns.set(font_scale=1.2)
+
+        # Create a correlation heatmap with all columns from the plotted_columns list
         sns.heatmap(self.df[plotted_columns].corr(), annot=True, cmap='crest', cbar_kws={'label': 'Correlation Coefficient'})
+
+        # Set the plot title and show the plot
         plt.title('Correlation between Quantity Columns')
         plt.show()
 
