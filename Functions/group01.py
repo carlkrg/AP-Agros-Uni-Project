@@ -110,8 +110,12 @@ class Group01:
             if column.endswith("_quantity"):
                 plotted_columns.append(column)
 
-        sns.heatmap(self.df[plotted_columns].corr())
+        plt.figure(figsize=(10, 8))
+        sns.set(font_scale=1.2)
+        sns.heatmap(self.df[plotted_columns].corr(), annot=True, cmap='crest', cbar_kws={'label': 'Correlation Coefficient'})
+        plt.title('Correlation between Quantity Columns')
         plt.show()
+
 
     def plot_area_chart(self, country: str, normalize: bool) -> None:
         """
