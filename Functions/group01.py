@@ -17,8 +17,6 @@ The `Group01` class has the following methods:
     selected country given by `country`, on the same chart with the X-axis being the Year.
 - gapminder_plot(self, country, normalize): Visualize Gapminder data for a specific year.
 
-
-
 Example usage:
     my_object = Group01("my_object")
     my_object.get_data()
@@ -39,23 +37,51 @@ from matplotlib import pyplot as plt
 
 class Group01:
     """
-    A class representing agricultural output of several countries.
+    A class to represent agricultural output of several countries.
 
-    Attributes:
-        name (str): The name of the object.
+    Attributes
+    ----------
+    name : str
+        name of the object
+
+    Methods
+    -------
+    get_data():
+        Downloads a CSV file containing agricultural total factor productivity data from this Github
+        repository (https://github.com/owid/owid-datasets/tree/master/datasets)
+
+    get_countries():
+        Returns a list of available countries in the dataset.
+
+    plot_quantity():
+        Plots a heatmap of the correlation between all the columns in the Pandas DataFrame that end
+        with the string '_quantity'.
+
+    plot_area_chart(country, normalize):
+        Plots an area chart of the distinct "_output_" columns for the given country or all 
+        countries if `country` is set to "World" or None. The columns are normalized by the
+        total output if the `normalize` parameter is set to True.
+
+    plot_country_chart(country, normalize):
+        Plots the total of the _output_ values of each selected country given by `country`, on the
+        same chart with the X-axis being the Year.
+
+    gapminder_plot(country, normalize):
+        Visualize Gapminder data for a specific year.
+
     """
 
     def __init__(self, name: str):
         """
-        Initialize the object with the given name.
+        Initializes an instance of the Group01 class.
 
-        Args:
-           name (str): The name of the object.
+        Parameters:
+            name: str, name of the object.
         """
         self.name = name
-        self.df = None
+        self.df = None  # Initialize self.df as None.
 
-    def get_data(self):
+    def get_data(self) -> None:
         """
         This method downloads a CSV file containing agricultural total factor productivity data from
         this Github repository (https://github.com/owid/owid-datasets/tree/master/datasets) and
@@ -65,18 +91,21 @@ class Group01:
         the class. If the DataFrame already exists (i.e., has already been loaded), the method does
         not reload it.
 
-        Returns:
+        Parameters:
             None
 
         Raises:
             Exception: If there is an error while downloading the data file
 
+        Returns:
+            None
+
         Example usage:
-            my_object = MyClass()
+            my_object = Group01("my_object")
             my_object.get_data()
         """
 
-        URL = """   https://
+        url = """   https://
                     raw.githubusercontent.com/
                     owid/owid-datasets/master/datasets/
                     Agricultural%20total%20factor%20productivity%20(USDA)/
@@ -93,15 +122,16 @@ class Group01:
         else:
             print("downloading data file...")
             try:
-                response = requests.get(URL, timeout=60)  # get the data from url
-            except Exception as e:
+                # get the data from url
+                response = requests.get(url, timeout=60)
+            except requests.exceptions.RequestException as e:
                 print("Error: unable to download data file")
                 print(e)
                 return
                 # exit the method
 
             print("saving data into file ... downloads/data.cs")
-            with open("downloads/data.csv", "w") as f:
+            with open("downloads/data.csv", "w", encoding="utf-8") as f:
                 f.write(response.text)  # write the data to a csv file
 
         if self.df is None:
@@ -118,39 +148,54 @@ class Group01:
         download and read the dataset into the `df` attribute. Then it returns a list of unique
         countries in the 'Entity' column.
 
+        Parameters:
+            None
+
+        Raises:
+            None
+
         Returns:
-            A list of available countries in the dataset.
+            list: A list of unique countries in the dataset.
+
+        Example usage:
+            my_object = Group01("my_object")
+            my_object.get_countries() # Output: ['Afghanistan', 'Albania', 'Algeria'...]
+
         """
         if self.df is None:
             self.get_data()  # check if df is available
-        return self.df["Entity"].unique().tolist()  # return all countries in a list
+        # return all countries in a list
+        return self.df["Entity"].unique().tolist()
 
-    def plot_quantity(self):
+    def plot_quantity(self) -> None:
         """
         Plots a heatmap of the correlation between all the columns in the Pandas DataFrame that end
         with the string '_quantity'.
 
         If the DataFrame does not exist as an attribute of the class instance, the method calls the
         'get_data()' method to obtain the data.
-        
+
+        The method creates an empty list called 'plotted_columns', and loops through each column in
+        the DataFrame, checking if the column name ends with the string '_quantity'. If a column
+        name ends with '_quantity', the name is appended to the 'plotted_columns' list.
+
+        Finally, the method calls the 'heatmap()' function from the seaborn library on the
+        'plotted_columns' data in the DataFrame, and displays the heatmap plot using 'plt.show()'.
+
+        Parameters:
+            None
+
         Raises:
-            Exception: If one or less columns with the "_quantity" suffix are available.
-
-<<<<<<< HEAD
-        The method creates an empty list called 'plotted_columns', and loops through each column in the DataFrame, checking if the column name ends with the string '_quantity'. If a column name ends with '_quantity', the name is appended to the 'plotted_columns' list.
-
-        Finally, the method calls the 'heatmap()' function from the seaborn library on the 'plotted_columns' data in the DataFrame, and displays the heatmap plot using 'plt.show()'.
+            None
 
         Returns:
             None
+
+        Example usage:
+            my_object = Group01("my_object")
+            my_object.plot_quantity()
         """
         # Check if self.df exists
-=======
-        Returns:
-            None.
-        """
-
->>>>>>> origin/pylint_corrections
         if self.df is None:
             self.get_data()
 
@@ -163,23 +208,21 @@ class Group01:
                 # Append the column name to the plotted_columns list
                 plotted_columns.append(column)
 
-<<<<<<< HEAD
         # Set the plot size and font scale
         plt.figure(figsize=(10, 8))
         sns.set(font_scale=1.2)
 
         # Create a correlation heatmap with all columns from the plotted_columns list
-        sns.heatmap(self.df[plotted_columns].corr(), annot=True, cmap='crest', cbar_kws={'label': 'Correlation Coefficient'})
+        sns.heatmap(
+            self.df[plotted_columns].corr(),
+            annot=True,
+            cmap="crest",
+            cbar_kws={"label": "Correlation Coefficient"},
+        )
 
         # Set the plot title and show the plot
-        plt.title('Correlation between Quantity Columns')
-=======
-        if len(plotted_columns) <= 1:
-            raise Exception("Not enough columns with '_quantity' suffix")
-        sns.heatmap(self.df[plotted_columns].corr())
->>>>>>> origin/pylint_corrections
+        plt.title("Correlation between Quantity Columns")
         plt.show()
-
 
     def plot_area_chart(self, country: str, normalize: bool) -> None:
         """
@@ -190,12 +233,24 @@ class Group01:
         If the dataframe is not available, the method will first call the `get_data` method to
         download and read the dataset into the `df` attribute.
 
+        Parameters:
+        country : str
+            The country to plot the data for. If set to "World" or None, the data for all countries
+            will be plotted.
+
+        normalize : bool
+            If set to True, the data will be normalized by the total output.
+
         Raises:
             Exception: If one or less columns with the "_output_" suffix are available or if the
             given country does not exist
 
         Returns:
-            An area chart of the distinct "_output_" columns for the given country.
+            None
+
+        Example usage:
+            my_object = Group01("my_object")
+            my_object.plot_area_chart("World", True)
         """
 
         if self.df is None:
@@ -243,11 +298,19 @@ class Group01:
         Plots the total of the _output_ values of each selected country given by `country`,
         on the same chart with the X-axis being the Year.
 
+        Parameters:
+        args : list
+            A list of countries to plot
+
         Raises:
             Exception: If the input is not a string or a list of strings
 
         Returns:
-            None.
+            None
+
+        Example usage:
+            my_object = Group01("my_object")
+            my_object.plot_country_chart("World", True)
         """
         title = "Plot of total _output_ values of "
 
@@ -288,6 +351,11 @@ class Group01:
         """
         Visualize Gapminder data for a specific year.
 
+        This function generates a scatter plot that shows the relationship between fertilizer
+        quantity and output quantity for agriculture in a specific year. The size of each point
+        represents the animal output quantity, which is assumed to be an indicator of the size of
+        the agricultural operation.
+
         Parameters:
         year : int
             The year for which to visualize the data.
@@ -299,7 +367,11 @@ class Group01:
             If the year is not present in the dataset.
 
         Returns:
-        None.
+            None
+
+        Example usage:
+            my_object = Group01("my_object")
+            my_object.gapminder_plot("World", True)
         """
         if not isinstance(year, int) or year < 0:
             raise TypeError("Please pass a positive integer for year")
