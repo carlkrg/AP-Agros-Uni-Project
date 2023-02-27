@@ -277,6 +277,7 @@ class Group01:
                 plt.plot(df_temp.Year, df_temp[each], label=each, alpha=0.4)
             plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
             plt.tick_params(labelsize=12)
+            plt.title('Consumption of agricultural products by country over time')
             plt.xlabel("Year", size=12)
             plt.ylabel(("Counsumption" + norm), size=12)
             plt.ylim(bottom=0)
@@ -284,8 +285,9 @@ class Group01:
 
         # Plotting for all countries or a specific country
         if (country is None) | (country == "World"):
-            df_temp = self.df[df_subset]
+            df_temp = self.df[df_subset].groupby("Year").sum().reset_index()
             country_plot(df_temp)
+            print(df_temp)
         elif country in self.get_countries():
             df_temp = self.df[self.df["Entity"] == country]
             df_temp = df_temp[df_subset]
@@ -399,10 +401,10 @@ class Group01:
             x="fertilizer_quantity",
             y="output_quantity",
             data=year_data,
-            legend=False,
+            legend=True,
             size=np_pop2,
             sizes=(20, 400),
-            alpha=0.5,
+            alpha=0.5
         )
 
         # Use seaborn scatterplot for better customization
