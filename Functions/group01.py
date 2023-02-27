@@ -286,8 +286,8 @@ class Group01:
         # Plotting for all countries or a specific country
         if (country is None) | (country == "World"):
             df_temp = self.df[df_subset].groupby("Year").sum().reset_index()
+            df_temp = df_temp.reindex(columns=list(df_temp.columns[1:]) + [df_temp.columns[0]])
             country_plot(df_temp)
-            print(df_temp)
         elif country in self.get_countries():
             df_temp = self.df[self.df["Entity"] == country]
             df_temp = df_temp[df_subset]
