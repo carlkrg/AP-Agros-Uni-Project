@@ -347,6 +347,8 @@ class Group01:
             raise ValueError("Please pass a country string or countries list")
 
         plt.title(title)
+        plt.xlabel('Year')
+        plt.ylabel('Total _output')
         plt.show()
 
     def gapminder(self, year: int) -> None:
