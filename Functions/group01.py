@@ -3,21 +3,39 @@ This module contains a `Group01` class, which represents agricultural output of 
 
 The `Group01` class has the following methods:
 
-- __init__(self, name): Initializes the object with the given name.
-- get_data(self): Downloads a CSV file containing agricultural total factor productivity data from
-    this Github repository (https://github.com/owid/owid-datasets/tree/master/datasets), saves it
-    into a downloads/ directory and reads the dataset into a pandas DataFrame
-- get_countries(self): Returns a list of available countries in the dataset.
-- plot_quantity(self): Plots a heatmap of the correlation between all the columns in the Pandas
+Methods:
+-------
+__init__(name): 
+    Initializes the object with the given name.
+
+get_data():
+    Downloads a CSV file containing agricultural total factor productivity data from
+    this Github repository (https://github.com/owid/owid-datasets/tree/master/datasets),
+    saves it into a downloads/ directory and reads the dataset into a pandas DataFrame.
+
+get_countries(): 
+    Returns a list of available countries in the dataset.
+
+plot_quantity():
+    Plots a heatmap of the correlation between all the columns in the Pandas
     DataFrame that end with the string '_quantity'.
-- plot_area_chart(self, country, normalize): Plots an area chart of the distinct "_output_" columns
-    for the given country or all countries if `country` is set to "World" or None. The columns are 
-    normalized by the total output if the `normalize` parameter is set to True.
-- plot_country_chart(self, country, normalize): Plots the total of the _output_ values of each 
-    selected country given by `country`, on the same chart with the X-axis being the Year.
-- gapminder_plot(self, country, normalize): Visualize Gapminder data for a specific year.
+
+plot_area_chart(country: str, normalize: bool):
+    Plots an area chart of the distinct "_output_" columns
+    for the given country or all countries if `country` is set to "World" or None.
+    The columns are normalized by the total output if the `normalize` parameter 
+    is set to True.
+
+plot_country_chart(args: Union[list[str], str]):
+    Plots the total of the _output_ values of each 
+    selected country given by `country`, on the same chart with the 
+    X-axis being the Year.
+
+gapminder_plot(year: int):
+    Visualize Gapminder data for a specific year.
 
 Example usage:
+--------------
     my_object = Group01("my_object")
     my_object.get_data()
     my_object.get_countries() # Output: ['Afghanistan', 'Albania', 'Algeria', ... 'Zimbabwe']
@@ -40,12 +58,15 @@ class Group01:
     """
     A class to represent agricultural output of several countries.
 
-    Attributes
+    Attributes:
     ----------
     name : str
         name of the object
 
-    Methods
+    df : pandas.DataFrame
+        a pandas DataFrame containing the data
+
+    Methods:
     -------
     get_data():
         Downloads a CSV file containing agricultural total factor productivity data from this Github
@@ -63,11 +84,11 @@ class Group01:
         countries if `country` is set to "World" or None. The columns are normalized by the
         total output if the `normalize` parameter is set to True.
 
-    plot_country_chart(country, normalize):
+    plot_country_chart(args: Union[list[str], str]):
         Plots the total of the _output_ values of each selected country given by `country`, on the
         same chart with the X-axis being the Year.
 
-    gapminder_plot(country, normalize):
+    gapminder_plot(year: int):
         Visualize Gapminder data for a specific year.
 
     """
@@ -243,6 +264,9 @@ class Group01:
             If set to True, the data will be normalized by the total output.
 
         Raises:
+            TypeError: If the `country` parameter is not a string or the `normalize` 
+            parameter is not a bool
+
             Exception: If one or less columns with the "_output_" suffix are available or if the
             given country does not exist
 
@@ -316,7 +340,7 @@ class Group01:
             A list of countries to plot
 
         Raises:
-            Exception: If the input is not a string or a list of strings
+            TypeError: If the input is not a string or a list of strings
 
         Returns:
             None
