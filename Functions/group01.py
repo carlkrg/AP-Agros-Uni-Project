@@ -33,6 +33,7 @@ import requests
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
+from typing import Union
 
 
 class Group01:
@@ -253,6 +254,12 @@ class Group01:
             my_object.plot_area_chart("World", True)
         """
 
+        if not isinstance(country, str):
+            raise TypeError("country is not a string, Please pass a string")
+        
+        if not isinstance(normalize, bool):
+            raise TypeError("normalize is not a bool, Please pass a bool")
+
         if self.df is None:
             self.get_data()
 
@@ -299,7 +306,7 @@ class Group01:
         else:
             raise TypeError("Country does not exist")
 
-    def plot_country_chart(self, args: list) -> None:
+    def plot_country_chart(self, args: Union[list, str]) -> None:
         """
         Plots the total of the _output_ values of each selected country given by `country`,
         on the same chart with the X-axis being the Year.
@@ -320,6 +327,9 @@ class Group01:
         """
         title = "Plot of total _output_ values of "
 
+        if not isinstance(args, list) or not isinstance(args, str):
+            raise TypeError("args is not a list or a string. Please pass a list or a string.")
+        
         if self.df is None:
             self.get_data()  # check if df is available
         # Get all columns with "_output"

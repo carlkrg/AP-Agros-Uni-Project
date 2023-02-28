@@ -44,7 +44,7 @@ Document everything!
 Make your calls compliant with __Static Type Checking__.
 
 - [x] One method will _download_ the data file into a __downloads/__ directory in the root directory of the project (main project directory). If the data file already exists, the method will not download it again.
-- [ ] This method must also read the dataset into a pandas dataframe which is an attribute of your class.
+- [x] This method must also read the dataset into a pandas dataframe which is an attribute of your class.
 
 ## Day 1, Phase 3
 
