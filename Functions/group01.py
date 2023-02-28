@@ -306,7 +306,7 @@ class Group01:
         else:
             raise TypeError("Country does not exist")
 
-    def plot_country_chart(self, args: Union[list, str]) -> None:
+    def plot_country_chart(self, args: Union[list[str], str]) -> None:
         """
         Plots the total of the _output_ values of each selected country given by `country`,
         on the same chart with the X-axis being the Year.
@@ -327,7 +327,7 @@ class Group01:
         """
         title = "Plot of total _output_ values of "
 
-        if not isinstance(args, list) or not isinstance(args, str):
+        if (not isinstance(args, list)) and (not isinstance(args, str)):
             raise TypeError("args is not a list or a string. Please pass a list or a string.")
         
         if self.df is None:
