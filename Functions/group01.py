@@ -46,12 +46,12 @@ Example usage:
 """
 
 import os
+from typing import Union
 import pandas as pd
 import requests
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
-from typing import Union
 
 
 class Group01:
@@ -80,7 +80,7 @@ class Group01:
         with the string '_quantity'.
 
     plot_area_chart(country, normalize):
-        Plots an area chart of the distinct "_output_" columns for the given country or all 
+        Plots an area chart of the distinct "_output_" columns for the given country or all
         countries if `country` is set to "World" or None. The columns are normalized by the
         total output if the `normalize` parameter is set to True.
 
@@ -264,7 +264,7 @@ class Group01:
             If set to True, the data will be normalized by the total output.
 
         Raises:
-            TypeError: If the `country` parameter is not a string or the `normalize` 
+            TypeError: If the `country` parameter is not a string or the `normalize`
             parameter is not a bool
 
             Exception: If one or less columns with the "_output_" suffix are available or if the
@@ -280,7 +280,7 @@ class Group01:
 
         if not isinstance(country, str):
             raise TypeError("country is not a string, Please pass a string")
-        
+
         if not isinstance(normalize, bool):
             raise TypeError("normalize is not a bool, Please pass a bool")
 
@@ -308,11 +308,11 @@ class Group01:
             for each in df_subset[:-1]:
                 list_outputs.append(df_temp[each])
                 list_labels.append(each)
-            plt.stackplot(df_temp.Year,list_outputs, labels=list_labels)
+            plt.stackplot(df_temp.Year, list_outputs, labels=list_labels)
             plt.set_cmap("Pastel1")
             plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
             plt.tick_params(labelsize=12)
-            plt.title('Consumption of agricultural products by country over time')
+            plt.title("Consumption of agricultural products by country over time")
             plt.xlabel("Year", size=12)
             plt.ylabel(("Counsumption" + norm), size=12)
             plt.ylim(bottom=0)
@@ -321,7 +321,9 @@ class Group01:
         # Plotting for all countries or a specific country
         if (country is None) | (country == "World"):
             df_temp = self.df[df_subset].groupby("Year").sum().reset_index()
-            df_temp = df_temp.reindex(columns=list(df_temp.columns[1:]) + [df_temp.columns[0]])
+            df_temp = df_temp.reindex(
+                columns=list(df_temp.columns[1:]) + [df_temp.columns[0]]
+            )
             country_plot(df_temp)
         elif country in self.get_countries():
             df_temp = self.df[self.df["Entity"] == country]
@@ -352,8 +354,10 @@ class Group01:
         title = "Plot of total _output_ values of "
 
         if (not isinstance(args, list)) and (not isinstance(args, str)):
-            raise TypeError("args is not a list or a string. Please pass a list or a string.")
-        
+            raise TypeError(
+                "args is not a list or a string. Please pass a list or a string."
+            )
+
         if self.df is None:
             self.get_data()  # check if df is available
         # Get all columns with "_output"
@@ -385,8 +389,8 @@ class Group01:
             raise TypeError("Please pass a country string or countries list")
 
         plt.title(title)
-        plt.xlabel('Year')
-        plt.ylabel('Total _output')
+        plt.xlabel("Year")
+        plt.ylabel("Total _output")
         plt.show()
 
     def gapminder(self, year: int) -> None:
@@ -444,7 +448,7 @@ class Group01:
             legend=True,
             size=np_pop2,
             sizes=(20, 400),
-            alpha=0.5
+            alpha=0.5,
         )
 
         # Use seaborn scatterplot for better customization
