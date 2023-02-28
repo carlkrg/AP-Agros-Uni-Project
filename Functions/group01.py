@@ -272,9 +272,13 @@ class Group01:
                     df_temp.iloc[:, :-2].div(df_temp.Total, axis=0) * 100
                 )
                 norm = "% (Normalized)"
+            list_outputs = []
+            list_labels = []
             for each in df_subset[:-1]:
-                plt.fill_between(df_temp.Year, df_temp[each], alpha=0.4)
-                plt.plot(df_temp.Year, df_temp[each], label=each, alpha=0.4)
+                list_outputs.append(df_temp[each])
+                list_labels.append(each)
+            plt.stackplot(df_temp.Year,list_outputs, labels=list_labels)
+            plt.set_cmap("Pastel1")
             plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
             plt.tick_params(labelsize=12)
             plt.title('Consumption of agricultural products by country over time')
@@ -293,7 +297,7 @@ class Group01:
             df_temp = df_temp[df_subset]
             country_plot(df_temp)
         else:
-            raise ValueError("Country does not exist")
+            raise TypeError("Country does not exist")
 
     def plot_country_chart(self, args: list) -> None:
         """
@@ -342,9 +346,9 @@ class Group01:
                     country_plot(each)
                     title += each + ", "
                 else:
-                    raise ValueError("Country does not exist")
+                    raise TypeError("Country does not exist")
         else:
-            raise ValueError("Please pass a country string or countries list")
+            raise TypeError("Please pass a country string or countries list")
 
         plt.title(title)
         plt.xlabel('Year')
