@@ -587,8 +587,6 @@ class Group01:
                 my_object = Group01("my_object")
                 my_object.gapminder()
             """
-            # Check if any argument is given in the function call?????????????
-
             # Ask for user input
             year = input("Please enter the year you want to visualize: ")
             log_scale_input = input("Do you want to use log scale? (y/n): ")
