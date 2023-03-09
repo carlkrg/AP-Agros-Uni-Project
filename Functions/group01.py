@@ -53,9 +53,7 @@ import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
 from typing import Optional
-import sys
-
-
+import geopandas as gpd
 
 
 class Group01:
@@ -106,6 +104,7 @@ class Group01:
         """
         self.name = name
         self.df = None  # Initialize self.df as None.
+        self.df_geographical = None
 
     def get_data(self) -> None:
         """
@@ -161,6 +160,19 @@ class Group01:
             self.df = pd.read_csv(
                 "downloads/data.csv"
             )  # read the data into a pandas dataframe
+
+        if os.path.exists("downloads/data_geographical.csv"):  # check if the data file exists
+            print("data_geographical file already exists")
+        else:
+            print("downloading data_geographical file...")
+            df_geographical = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+            df_geographical.to_csv("downloads/data_geographical.csv")
+
+        if self.df_geographical is None:
+            print("reading data_geographical file into pandas geo dataframe...")
+            self.df_geographical = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))    
+
+
 
     def get_countries(self) -> list:
         """
