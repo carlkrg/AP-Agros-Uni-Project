@@ -5,7 +5,7 @@ The `Group01` class has the following methods:
 
 Methods:
 -------
-__init__(name): 
+__init__(name):
     Initializes the object with the given name.
 
 get_data():
@@ -13,7 +13,7 @@ get_data():
     this Github repository (https://github.com/owid/owid-datasets/tree/master/datasets),
     saves it into a downloads/ directory and reads the dataset into a pandas DataFrame.
 
-get_countries(): 
+get_countries():
     Returns a list of available countries in the dataset.
 
 plot_quantity():
@@ -23,12 +23,12 @@ plot_quantity():
 plot_area_chart(country: str, normalize: bool):
     Plots an area chart of the distinct "_output_" columns
     for the given country or all countries if `country` is set to "World" or None.
-    The columns are normalized by the total output if the `normalize` parameter 
+    The columns are normalized by the total output if the `normalize` parameter
     is set to True.
 
 plot_country_chart(args: Union[list[str], str]):
-    Plots the total of the _output_ values of each 
-    selected country given by `country`, on the same chart with the 
+    Plots the total of the _output_ values of each
+    selected country given by `country`, on the same chart with the
     X-axis being the Year.
 
 gapminder_plot(year: int):
@@ -214,7 +214,7 @@ class Group01:
         name ends with '_quantity', the name is appended to the 'plotted_columns' list.
 
         Finally, the method calls the 'heatmap()' function from the seaborn library on the
-        'plotted_columns' data in the DataFrame, and displays the heatmap plot using 'plt.show()'.
+        'plotted_columns' data in the DataFrame, and displays the lower triangle heatmap plot using 'plt.show()'.
 
         Parameters:
             None
@@ -246,17 +246,23 @@ class Group01:
         plt.figure(figsize=(10, 8))
         sns.set(font_scale=1.2)
 
+
+        # Getting the lower Triangle of the correlation matrix
+        matrix = np.triu(self.df[plotted_columns].corr())
+
         # Create a correlation heatmap with all columns from the plotted_columns list
         sns.heatmap(
             self.df[plotted_columns].corr(),
             annot=True,
             cmap="crest",
             cbar_kws={"label": "Correlation Coefficient"},
+            mask=matrix
         )
 
         # Set the plot title and show the plot
         plt.title("Correlation between Quantity Columns")
         plt.show()
+
 
     def plot_area_chart(self, country: Optional[str] = None, normalize: bool = False, optional: Optional[str] = None) -> None:
             """
@@ -268,10 +274,10 @@ class Group01:
             download and read the dataset into the `df` attribute.
 
             Parameters:
-            country (str, optional): 
+            country (str, optional):
                 The country to plot the data for. If set to "World" or None,
                 the data for all countries will be plotted.
-            
+
             normalize : bool
                 If set to True, the data will be normalized by the total output.
 
@@ -431,7 +437,7 @@ class Group01:
         Example usage:
             my_object = Group01("my_object")
             my_object.gapminder_plot(2000, True)
-        """        
+        """
         if not isinstance(year, int) or year < 0:
             raise TypeError("Please pass a positive integer for year")
 
