@@ -160,6 +160,14 @@ class Group01:
             self.df = pd.read_csv(
                 "downloads/data.csv"
             )  # read the data into a pandas dataframe
+            aggregated_columns = ('Caribbean','Central Africa', 'Central African Republic',
+                          'Central America','Central Asia', 'Central Europe','Czechoslovakia',
+                          'Developed Asia','Developed countries', 'Former Soviet Union','High income',
+                          'Horn of Africa','Latin America and the Caribbean','Least developed countries',
+                          'Low income', 'Lower-middle income','North Africa','Northeast Asia','Northern Europe', 'South Asia',
+                          'Southeast Asia', 'Southern Africa', 'Southern Europe','Sub-Saharan Africa',
+                          'Upper-middle income','West Africa' ,'West Asia', 'Western Europe' ,'World', 'Yugoslavia')
+            self.df = self.df[~self.df['Entity'].isin(aggregated_columns)]
 
         if os.path.exists("downloads/data_geographical.csv"):  # check if the data file exists
             print("data_geographical file already exists")
@@ -170,7 +178,7 @@ class Group01:
 
         if self.df_geographical is None:
             print("reading data_geographical file into pandas geo dataframe...")
-            self.df_geographical = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))    
+            self.df_geographical = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
 
 
 
@@ -261,6 +269,8 @@ class Group01:
 
         # Set the plot title and show the plot
         plt.title("Correlation between Quantity Columns")
+        fig = plt.gcf()
+        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.2)
         plt.show()
 
 
@@ -330,7 +340,9 @@ class Group01:
                 plt.set_cmap("Pastel1")
                 plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
                 plt.tick_params(labelsize=12)
-                plt.title("Consumption of agricultural products by country over time")
+                plt.title("Consumption of agricultural products by country over time, O")
+                fig = plt.gcf()
+                fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
                 plt.xlabel("Year", size=12)
                 plt.ylabel(("Counsumption" + norm), size=12)
                 plt.ylim(bottom=0)
@@ -407,6 +419,8 @@ class Group01:
             raise TypeError("Please pass a country string or countries list")
 
         plt.title(title)
+        fig = plt.gcf()
+        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
         plt.xlabel("Year")
         plt.ylabel("Total _output")
         plt.show()
@@ -475,6 +489,8 @@ class Group01:
         plt.xlabel("fertilizer_quantity", fontsize=14)
         plt.ylabel("output_quantity", fontsize=14)
         plt.title(f"Gapminder agriculture - Year {year}", fontsize=20)
+        fig = plt.gcf()
+        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
 
         if log_scale:
             plt.xscale('log')
