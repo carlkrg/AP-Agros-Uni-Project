@@ -561,8 +561,10 @@ class Group01:
             countries (list): A list of up to three country names to plot.
 
         Raises:
+            TypeError: If the received argument is not a list.
             ValueError: If the agricultural data has not been loaded yet.
             ValueError: If no valid countries are provided.
+            ValueError: If more than three countries are provided.
 
         Returns:
             None
@@ -572,15 +574,25 @@ class Group01:
             my_object.predictor(['United States', 'China', 'India'])
 
         """
+        if not isinstance(countries, list):
+            raise TypeError('No valid type as an argument. Please insert the names of countries as a list into the method.')
+        
         if self.df.empty:
-            raise ValueError("Agricultural data has not been loaded yet.")
+            raise ValueError('Agricultural data has not been loaded yet.')
         available_countries = set(self.df['Entity'].unique())
+
         # Select the countries that are in the available countries
         countries_to_use = [country for country in countries if country in available_countries]
         if not countries_to_use:
             # Raise an error if no valid countries are provided
             raise ValueError(f"No valid countries provided. Available countries are: {', '.join(available_countries)}")
+        
+        if len(countries) > 3:
+            # Raise an error if more than three countries are provided
+            raise ValueError("Maximum of three countries can be provided.")
+        
         fig, ax = plt.subplots(figsize=(12, 8))
+        
         for country in countries_to_use:
             # Select the data for the current country
             data = self.df[self.df['Entity'] == country]
@@ -593,14 +605,14 @@ class Group01:
             model = ARIMA(tfp, order=(20, 2, 2))
             model_fit = model.fit()
             # Generate predictions for TFP up to 2050
-            #predictions = model_fit.predict(start=years[-1], end=2050, dynamic=True)
             predictions = model_fit.forecast(steps= 31)
             # Plot the predicted TFP using a different line style
-            #ax.plot(np.arange(years[-1], 2051), predictions, linestyle='--', color=ax.get_lines()[-1].get_color())
             ax.plot(np.arange(years[-1], years[-1]+31), predictions, linestyle='--', color=ax.get_lines()[-1].get_color(), label=f"{country} (forecast)")
 
         # Set the title and legend for the plot
         ax.set_title("Total Factor Productivity (TFP) by Year")
+        plt.xlabel("Year", fontsize=14)
+        plt.ylabel("Total Factor Productivity", fontsize=14)
         ax.legend()
         # Show the plot
         plt.show()
