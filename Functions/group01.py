@@ -604,5 +604,3 @@ class Group01:
         ax.legend()
         # Show the plot
         plt.show()
-
-        # Maybe try out instead of forecasting use prediction?????LK
