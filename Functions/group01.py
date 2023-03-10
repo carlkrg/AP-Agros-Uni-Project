@@ -552,7 +552,10 @@ class Group01:
         plt.show()
         
     def predictor(self, countries: list) -> None:
-        """Plots the Total Factor Productivity (TFP) of the given countries and predicts TFP up to 2050 using ARIMA.
+        """
+        Plots the Total Factor Productivity (TFP) of the given countries and predicts TFP up to 2050 using ARIMA.
+        Arima is used instead of SARIMAX because it was no seasonality in the data.
+        It was checked by plotting ACF and PACF plots and by checking the seasonal decomposition plot.
 
         Args:
             countries (list): A list of up to three country names to plot.
