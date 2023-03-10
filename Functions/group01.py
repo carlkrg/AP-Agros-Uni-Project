@@ -58,6 +58,10 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from typing import Optional
 import geopandas as gpd
+from statsmodels.tsa.arima.model import ARIMA
+from statsmodels.tsa.statespace.sarimax import SARIMAX
+
+
 
 
 class Group01:
@@ -508,39 +512,94 @@ class Group01:
         plt.show()
 
     def choropleth(self, year: int) -> None:
+        """
+        Plots a choropleth map of the total factor productivity (tfp) for the given year
+
+        Parameters:
+        year : int
+            The year for which to plot the tfp
+
+        Raises:
+            ValueError: If the input year is not an integer
+            ValueError: If the self.df or self.df_geographical attributes are None
+
+        Returns:
+            None
+
+        Example usage:
+            my_object.choropleth(2000)
             """
-            Plots a choropleth map of the total factor productivity (tfp) for the given year
+        # Check that year is an integer
+        if not isinstance(year, int):
+            raise ValueError("Year must be an integer")
 
-            Parameters:
-            year : int
-                The year for which to plot the tfp
+        # Check if self.df or self.df_geographical attributes are None and call self.get_data() if necessary
+        if (self.df is None) or (self.df_geographical is None):
+            self.get_data()
 
-            Raises:
-                ValueError: If the input year is not an integer
-                ValueError: If the self.df or self.df_geographical attributes are None
+        # Rename country in self.df according to merge_dict
+        self.df = self.df.replace({'Entity': self.merge_dict})
 
-            Returns:
-                None
+        # Merge geographical and agricultural dataframe and filter by selected year
+        merged_df = self.df_geographical.merge(self.df, left_on='name', right_on='Entity', how='left')
+        merged_df = merged_df[merged_df['Year'] == year]
 
-            Example usage:
-                my_object.choropleth(2000)
-                """
-            # Check that year is an integer
-            if not isinstance(year, int):
-                raise ValueError("Year must be an integer")
+        # Plot choropleth map of tfp
+        ax = merged_df.plot(column='tfp', legend=True, figsize=[20, 10], legend_kwds={'label': 'total factor productivity'})
+        ax.set_title(f'Total factor productivity in {year}')
+        plt.xlabel("Longitude", fontsize=14)
+        plt.ylabel("Latitude", fontsize=14)
+        plt.show()
+        
+    def predictor(self, countries: list) -> None:
+        """Plots the Total Factor Productivity (TFP) of the given countries and predicts TFP up to 2050 using ARIMA.
 
-            # Check if self.df or self.df_geographical attributes are None and call self.get_data() if necessary
-            if (self.df is None) or (self.df_geographical is None):
-                self.get_data()
+        Args:
+            countries (list): A list of up to three country names to plot.
 
-            # Rename country in self.df according to merge_dict
-            self.df = self.df.replace({'Entity': self.merge_dict})
+        Raises:
+            ValueError: If the agricultural data has not been loaded yet.
+            ValueError: If no valid countries are provided.
 
-            # Merge geographical and agricultural dataframe and filter by selected year
-            merged_df = self.df_geographical.merge(self.df, left_on='name', right_on='Entity', how='left')
-            merged_df = merged_df[merged_df['Year'] == year]
+        Returns:
+            None
 
-            # Plot choropleth map of tfp
-            ax = merged_df.plot(column='tfp', legend=True, figsize=[20, 10], legend_kwds={'label': 'total factor productivity'})
-            ax.set_title(f'Total factor productivity in {year}')
-            plt.show()
+        Example usage:
+            my_object = Group01("my_object")
+            my_object.predictor(['United States', 'China', 'India'])
+
+        """
+        if self.df.empty:
+            raise ValueError("Agricultural data has not been loaded yet.")
+        available_countries = set(self.df['Entity'].unique())
+        # Select the countries that are in the available countries
+        countries_to_use = [country for country in countries if country in available_countries]
+        if not countries_to_use:
+            # Raise an error if no valid countries are provided
+            raise ValueError(f"No valid countries provided. Available countries are: {', '.join(available_countries)}")
+        fig, ax = plt.subplots(figsize=(12, 8))
+        for country in countries_to_use:
+            # Select the data for the current country
+            data = self.df[self.df['Entity'] == country]
+            # Extract the TFP and years values
+            tfp = data['tfp'].values
+            years = data['Year'].values
+            # Plot the TFP for the current country
+            ax.plot(years, tfp, label=country)
+            # Fit an ARIMA model to the TFP data for the current country
+            model = ARIMA(tfp, order=(20, 2, 2))
+            model_fit = model.fit()
+            # Generate predictions for TFP up to 2050
+            #predictions = model_fit.predict(start=years[-1], end=2050, dynamic=True)
+            predictions = model_fit.forecast(steps= 31)
+            # Plot the predicted TFP using a different line style
+            #ax.plot(np.arange(years[-1], 2051), predictions, linestyle='--', color=ax.get_lines()[-1].get_color())
+            ax.plot(np.arange(years[-1], years[-1]+31), predictions, linestyle='--', color=ax.get_lines()[-1].get_color(), label=f"{country} (forecast)")
+
+        # Set the title and legend for the plot
+        ax.set_title("Total Factor Productivity (TFP) by Year")
+        ax.legend()
+        # Show the plot
+        plt.show()
+
+        # Maybe try out instead of forecasting use prediction?????LK
