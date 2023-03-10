@@ -499,3 +499,50 @@ class Group01:
             plt.ylabel("output_quantity_log", fontsize=14)
 
         plt.show()
+
+    def choropleth(self, year: int) -> None:
+        """
+        Creates a choropleth map of the TFP variable for a given year.
+
+        Parameters:
+        -----------
+        year : int
+            The year to plot the TFP variable for. Must be an integer.
+
+        Raises:
+        -------
+        ValueError
+            If the year input is not an integer.
+
+        Returns:
+        --------
+        None.
+
+        Description:
+        ------------
+        This method merges the agricultural data with the geodata on the countries,
+        and creates a choropleth map of the TFP variable for a given year. It also
+        renames at least one country if necessary, using the merge_dict variable.
+
+        Note:
+        -----
+        This method requires the geopandas package to be installed.
+        """
+        
+        if not isinstance(year, int):
+            raise ValueError('Input year must be an integer')
+
+        # Filter data by year
+        df_year = self.df[self.df['year'] == year]
+
+        # Merge data with geodata on countries
+        merged_data = pd.merge(self.df_geographical, df_year, how='left', left_on='name', right_on='country')
+
+        # Rename countries as needed
+        merged_data['name'].replace(self.merge_dict, inplace=True)
+
+        # Plot choropleth map
+        fig, ax = plt.subplots(figsize=(10, 5))
+        merged_data.plot(column='tfp', ax=ax, legend=True, cmap='OrRd')
+        ax.set_title(f'Total Factor Productivity for {year}')
+        plt.show()
