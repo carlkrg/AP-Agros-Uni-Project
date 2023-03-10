@@ -34,6 +34,9 @@ plot_country_chart(args: Union[list[str], str]):
 gapminder_plot(year: int):
     Visualize Gapminder data for a specific year.
 
+def choropleth(self, year: int) -> None:
+        Plots a choropleth map of the total factor productivity (tfp) for the given year
+
 Example usage:
 --------------
     my_object = Group01("my_object")
@@ -43,6 +46,7 @@ Example usage:
     my_object.plot_area_chart("World", True)
     my_object.plot_country_chart("World", True)
     my_object.gapminder_plot("World", True)
+    my_object.choropleth(1990)
 """
 
 import os
@@ -93,6 +97,8 @@ class Group01:
     gapminder_plot(year: int):
         Visualize Gapminder data for a specific year.
 
+    def choropleth(self, year: int) -> None:
+            Plots a choropleth map of the total factor productivity (tfp) for the given year
     """
 
     def __init__(self, name: str):
@@ -105,6 +111,7 @@ class Group01:
         self.name = name
         self.df = None  # Initialize self.df as None.
         self.df_geographical = None
+        self.merge_dict = {'Democratic Republic of Congo': 'Dem. Rep. Congo'}
 
     def get_data(self) -> None:
         """
@@ -499,3 +506,41 @@ class Group01:
             plt.ylabel("output_quantity_log", fontsize=14)
 
         plt.show()
+
+    def choropleth(self, year: int) -> None:
+            """
+            Plots a choropleth map of the total factor productivity (tfp) for the given year
+
+            Parameters:
+            year : int
+                The year for which to plot the tfp
+
+            Raises:
+                ValueError: If the input year is not an integer
+                ValueError: If the self.df or self.df_geographical attributes are None
+
+            Returns:
+                None
+
+            Example usage:
+                my_object.choropleth(2000)
+                """
+            # Check that year is an integer
+            if not isinstance(year, int):
+                raise ValueError("Year must be an integer")
+
+            # Check if self.df or self.df_geographical attributes are None and call self.get_data() if necessary
+            if (self.df is None) or (self.df_geographical is None):
+                self.get_data()
+
+            # Rename country in self.df according to merge_dict
+            self.df = self.df.replace({'Entity': self.merge_dict})
+
+            # Merge geographical and agricultural dataframe and filter by selected year
+            merged_df = self.df_geographical.merge(self.df, left_on='name', right_on='Entity', how='left')
+            merged_df = merged_df[merged_df['Year'] == year]
+
+            # Plot choropleth map of tfp
+            ax = merged_df.plot(column='tfp', legend=True, figsize=[20, 10], legend_kwds={'label': 'total factor productivity'})
+            ax.set_title(f'Total factor productivity in {year}')
+            plt.show()
