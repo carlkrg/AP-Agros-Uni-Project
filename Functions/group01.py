@@ -280,8 +280,10 @@ class Group01:
 
         # Set the plot title and show the plot
         plt.title("Correlation between Quantity Columns")
+        # Add the source of the data as a subtitle
         fig = plt.gcf()
         fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.2)
+        # Show the plot
         plt.show()
 
 
@@ -352,11 +354,13 @@ class Group01:
                 plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
                 plt.tick_params(labelsize=12)
                 plt.title("Consumption of agricultural products by country over time, O")
+                # Add the source of the data as a subtitle
                 fig = plt.gcf()
                 fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
                 plt.xlabel("Year", size=12)
                 plt.ylabel(("Counsumption" + norm), size=12)
                 plt.ylim(bottom=0)
+                # Show the plot
                 plt.show()
 
             # Plotting for all countries or a specific country
@@ -430,10 +434,12 @@ class Group01:
             raise TypeError("Please pass a country string or countries list")
 
         plt.title(title)
+        # Add the source of the data as a subtitle
         fig = plt.gcf()
         fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
         plt.xlabel("Year")
         plt.ylabel("Total _output")
+        # Show the plot
         plt.show()
 
     def gapminder(self, year: int, log_scale: bool = False) -> None:
@@ -500,6 +506,7 @@ class Group01:
         plt.xlabel("fertilizer_quantity", fontsize=14)
         plt.ylabel("output_quantity", fontsize=14)
         plt.title(f"Gapminder agriculture - Year {year}", fontsize=20)
+         # Add the source of the data as a subtitle
         fig = plt.gcf()
         fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
 
@@ -549,6 +556,10 @@ class Group01:
         ax.set_title(f'Total factor productivity in {year}')
         plt.xlabel("Longitude", fontsize=14)
         plt.ylabel("Latitude", fontsize=14)
+        # Add the source of the data as a subtitle
+        fig = plt.gcf()
+        fig.suptitle("Sources: Natural Earth powered by WordPress and Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
+        # Show the plot
         plt.show()
         
     def predictor(self, countries: list) -> None:
@@ -614,5 +625,8 @@ class Group01:
         plt.xlabel("Year", fontsize=14)
         plt.ylabel("Total Factor Productivity", fontsize=14)
         ax.legend()
+        # Add the source of the data as a subtitle
+        fig = plt.gcf()
+        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
         # Show the plot
         plt.show()
