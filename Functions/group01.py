@@ -570,6 +570,8 @@ class Group01:
         It is oserved by the autocorrelation that the time series of the data does show a long-term trend 
         or systematic patterns that could affect its statistical properties. Thats why we have to use the differencing 
         parameter 'd' to remove the trend and make the data stationary and smooth the variance and mean.
+        It is important becasue an accurate prediction can only be made for stationary series, 
+        since the data are otherwise randomly distributed and randomness cannot be forecasted.
         The differencing parameter 'd' is set to 2.
 
         Args:
