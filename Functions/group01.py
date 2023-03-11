@@ -567,6 +567,10 @@ class Group01:
         Plots the Total Factor Productivity (TFP) of the given countries and predicts TFP up to 2050 using ARIMA.
         Arima is used instead of SARIMAX because it was no seasonality in the data.
         It was checked by plotting ACF and PACF plots and by checking the seasonal decomposition plot.
+        It is oserved by the autocorrelation that the time series of the data does show a long-term trend 
+        or systematic patterns that could affect its statistical properties. Thats why we have to use the differencing 
+        parameter 'd' to remove the trend and make the data stationary and smooth the variance and mean.
+        The differencing parameter 'd' is set to 2.
 
         Args:
             countries (list): A list of up to three country names to plot.
