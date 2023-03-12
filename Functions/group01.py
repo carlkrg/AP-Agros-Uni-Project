@@ -591,6 +591,9 @@ class Group01:
             my_object.predictor(['United States', 'China', 'India'])
 
         """
+        import warnings
+        warnings.filterwarnings('ignore')
+
         if not isinstance(countries, list):
             raise TypeError('No valid type as an argument. Please insert the names of countries as a list into the method.')
         
