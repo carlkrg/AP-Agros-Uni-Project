@@ -106,10 +106,12 @@ class Group01:
 
     choropleth(self, year: int) -> None:
         Plots a choropleth map of the total factor productivity (tfp) for the given year
-    
+
     predictor(self, countries: list) -> None:
         Predicts the total factor productivity (tfp) by year for the given countries up to three until the year 2050.
     """
+
+    merge_dict = {'Democratic Republic of Congo': 'Dem. Rep. Congo'}
 
     def __init__(self, name: str):
         """
@@ -121,7 +123,6 @@ class Group01:
         self.name = name
         self.df = None  # Initialize self.df as None.
         self.df_geographical = None
-        self.merge_dict = {'Democratic Republic of Congo': 'Dem. Rep. Congo'}
 
     def get_data(self) -> None:
         """
@@ -551,7 +552,7 @@ class Group01:
             self.get_data()
 
         # Rename country in self.df according to merge_dict
-        self.df = self.df.replace({'Entity': self.merge_dict})
+        self.df = self.df.replace({'Entity': merge_dict})
 
         # Merge geographical and agricultural dataframe and filter by selected year
         merged_df = self.df_geographical.merge(self.df, left_on='name', right_on='Entity', how='left')
@@ -567,16 +568,16 @@ class Group01:
         fig.suptitle("Sources: Natural Earth powered by WordPress and Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
         # Show the plot
         plt.show()
-        
+
     def predictor(self, countries: list) -> None:
         """
         Plots the Total Factor Productivity (TFP) of the given countries and predicts TFP up to 2050 using ARIMA.
         Arima is used instead of SARIMAX because it was no seasonality in the data.
         It was checked by plotting ACF and PACF plots and by checking the seasonal decomposition plot.
-        It is oserved by the autocorrelation that the time series of the data does show a long-term trend 
-        or systematic patterns that could affect its statistical properties. Thats why we have to use the differencing 
+        It is oserved by the autocorrelation that the time series of the data does show a long-term trend
+        or systematic patterns that could affect its statistical properties. Thats why we have to use the differencing
         parameter 'd' to remove the trend and make the data stationary and smooth the variance and mean.
-        It is important becasue an accurate prediction can only be made for stationary series, 
+        It is important becasue an accurate prediction can only be made for stationary series,
         since the data are otherwise randomly distributed and randomness cannot be forecasted.
 
         The order of the autoregressive (AR) component parameter 'p' is set to 20.
@@ -605,7 +606,7 @@ class Group01:
 
         if not isinstance(countries, list):
             raise TypeError('No valid type as an argument. Please insert the names of countries as a list into the method.')
-        
+
         if self.df.empty:
             raise ValueError('Agricultural data has not been loaded yet.')
         available_countries = set(self.df['Entity'].unique())
@@ -615,13 +616,13 @@ class Group01:
         if not countries_to_use:
             # Raise an error if no valid countries are provided
             raise ValueError(f"No valid countries provided. Available countries are: {', '.join(available_countries)}")
-        
+
         if len(countries) > 3:
             # Raise an error if more than three countries are provided
             raise ValueError("Maximum of three countries can be provided.")
-        
+
         fig, ax = plt.subplots(figsize=(12, 8))
-        
+
         for country in countries_to_use:
             # Select the data for the current country
             data = self.df[self.df['Entity'] == country]
