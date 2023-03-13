@@ -111,6 +111,12 @@ class Group01:
         Predicts the total factor productivity (tfp) by year for the given countries up to three until the year 2050.
     """
 
+    merge_dict = {'Bosnia and Herzegovina': 'Bosnia and Herz.', 'Burma': 'Myanmar', 'Eswatini': 'eSwatini',
+              'United States': 'United States of America', 'North Macedonia': 'Macedonia',
+              'Dominican Republic': 'Dominican Rep.', 'Equatorial Guinea': 'Eq. Guinea', 'South Sudan': 'S. Sudan',
+              'Democratic Republic of Congo': 'Dem. Rep. Congo', 'Solomon Islands': 'Solomon Is.', 'Timor': 'Timor-Leste',
+              'Central African Republic': 'Central African Rep.', 'Macedonia': 'North Macedonia'}
+
     def __init__(self, name: str):
         """
         Initializes an instance of the Group01 class.
@@ -121,11 +127,11 @@ class Group01:
         self.name = name
         self.df = None  # Initialize self.df as None.
         self.df_geographical = None
-        self.merge_dict = {'Bosnia and Herzegovina': 'Bosnia and Herz.', 'Burma': 'Myanmar', 'Eswatini': 'eSwatini',
+        '''self.merge_dict = {'Bosnia and Herzegovina': 'Bosnia and Herz.', 'Burma': 'Myanmar', 'Eswatini': 'eSwatini',
               'United States': 'United States of America', 'North Macedonia': 'Macedonia',
               'Dominican Republic': 'Dominican Rep.', 'Equatorial Guinea': 'Eq. Guinea', 'South Sudan': 'S. Sudan',
               'Democratic Republic of Congo': 'Dem. Rep. Congo', 'Solomon Islands': 'Solomon Is.', 'Timor': 'Timor-Leste',
-              'Central African Republic': 'Central African Rep.', 'Macedonia': 'North Macedonia'}
+              'Central African Republic': 'Central African Rep.', 'Macedonia': 'North Macedonia'}'''
 
     def get_data(self) -> None:
         """
@@ -537,8 +543,9 @@ class Group01:
             The year for which to plot the tfp
 
         Raises:
-            ValueError: If the input year is not an integer
+            TypeError: If the input year is not an integer
             ValueError: If the self.df or self.df_geographical attributes are None
+            ValueError: If year is not in the dataset
 
         Returns:
             None
@@ -548,14 +555,18 @@ class Group01:
             """
         # Check that year is an integer
         if not isinstance(year, int):
-            raise ValueError("Year must be an integer")
+            raise TypeError("Year must be an integer")
 
         # Check if self.df or self.df_geographical attributes are None and call self.get_data() if necessary
         if (self.df is None) or (self.df_geographical is None):
             self.get_data()
 
+        #Check if year is in the dataset
+        if year not in self.df["Year"].values:
+            raise ValueError("Year is not in the dataset")
+
         # Rename country in self.df according to merge_dict
-        self.df = self.df.replace({'Entity': self.merge_dict})
+        self.df = self.df.replace({'Entity': Group01.merge_dict})
 
         # Merge geographical and agricultural dataframe and filter by selected year
         merged_df = self.df_geographical.merge(self.df, left_on='name', right_on='Entity', how='left')
