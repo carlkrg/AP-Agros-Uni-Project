@@ -30,7 +30,7 @@ The structure of the repository is as follows. The main directory of the project
 
 ### Data
 
-For this project, I used data from [Our World in Data](https://ourworldindata.org/). The dataset can be found [here](https://github.com/owid/owid-datasets/blob/master/datasets/Agricultural%20total%20factor%20productivity%20(USDA)/Agricultural%20total%20factor%20productivity%20(USDA).csv).
+For this project, we used data from [Our World in Data](https://ourworldindata.org/). The dataset can be found [here](https://github.com/owid/owid-datasets/blob/master/datasets/Agricultural%20total%20factor%20productivity%20(USDA)/Agricultural%20total%20factor%20productivity%20(USDA).csv).
 
 ### Structure of the methods 
 All of the following methods are contained in the class Group01, and the analyses are made in the Showcase notebook.
