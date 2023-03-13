@@ -123,6 +123,7 @@ class Group01:
         self.name = name
         self.df = None  # Initialize self.df as None.
         self.df_geographical = None
+        self.merge_dict = {'Democratic Republic of Congo': 'Dem. Rep. Congo'}
 
     def get_data(self) -> None:
         """
@@ -552,7 +553,7 @@ class Group01:
             self.get_data()
 
         # Rename country in self.df according to merge_dict
-        self.df = self.df.replace({'Entity': merge_dict})
+        self.df = self.df.replace({'Entity': self.merge_dict})
 
         # Merge geographical and agricultural dataframe and filter by selected year
         merged_df = self.df_geographical.merge(self.df, left_on='name', right_on='Entity', how='left')
