@@ -111,8 +111,6 @@ class Group01:
         Predicts the total factor productivity (tfp) by year for the given countries up to three until the year 2050.
     """
 
-    merge_dict = {'Democratic Republic of Congo': 'Dem. Rep. Congo'}
-
     def __init__(self, name: str):
         """
         Initializes an instance of the Group01 class.
@@ -123,7 +121,11 @@ class Group01:
         self.name = name
         self.df = None  # Initialize self.df as None.
         self.df_geographical = None
-        self.merge_dict = {'Democratic Republic of Congo': 'Dem. Rep. Congo'}
+        self.merge_dict = {'Bosnia and Herzegovina': 'Bosnia and Herz.', 'Burma': 'Myanmar', 'Eswatini': 'eSwatini',
+              'United States': 'United States of America', 'North Macedonia': 'Macedonia',
+              'Dominican Republic': 'Dominican Rep.', 'Equatorial Guinea': 'Eq. Guinea', 'South Sudan': 'S. Sudan',
+              'Democratic Republic of Congo': 'Dem. Rep. Congo', 'Solomon Islands': 'Solomon Is.', 'Timor': 'Timor-Leste',
+              'Central African Republic': 'Central African Rep.', 'Macedonia': 'North Macedonia'}
 
     def get_data(self) -> None:
         """
