@@ -37,7 +37,8 @@ gapminder_plot(year: int):
 choropleth(self, year: int) -> None:
     Plots a choropleth map of the total factor productivity (tfp) for the given year
 
-predictor
+predictor(self, countries: list) -> None:
+    Predicts the total factor productivity (tfp) by year for the given countries up to three until the year 2050.
 
 
 Example usage:
@@ -50,6 +51,7 @@ Example usage:
     my_object.plot_country_chart("World", True)
     my_object.gapminder_plot("World", True)
     my_object.choropleth(1990)
+    my_object.predictor(['Germany','France','Iraq'])
 """
 
 import os
@@ -62,7 +64,7 @@ from matplotlib import pyplot as plt
 from typing import Optional
 import geopandas as gpd
 from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.statespace.sarimax import SARIMAX
+import warnings
 
 
 
@@ -585,14 +587,17 @@ class Group01:
 
     def predictor(self, countries: list) -> None:
         """
-        Plots the Total Factor Productivity (TFP) of the given countries and predicts TFP up to 2050 using ARIMA.
-        Arima is used instead of SARIMAX because it was no seasonality in the data.
-        It was checked by plotting ACF and PACF plots and by checking the seasonal decomposition plot.
-        It is oserved by the autocorrelation that the time series of the data does show a long-term trend
-        or systematic patterns that could affect its statistical properties. Thats why we have to use the differencing
-        parameter 'd' to remove the trend and make the data stationary and smooth the variance and mean.
-        It is important becasue an accurate prediction can only be made for stationary series,
-        since the data are otherwise randomly distributed and randomness cannot be forecasted.
+        Plots the Total Factor Productivity (TFP) of the given countries
+        and predicts TFP up to 2050 using ARIMA. Arima is used instead of 
+        SARIMAX because it was no seasonality in the data. It was checked by 
+        plotting ACF and PACF plots and by checking the seasonal decomposition 
+        plot. It is oserved by the autocorrelation that the time series of the 
+        data does show a long-term trend or systematic patterns that could affect 
+        its statistical properties. Thats why we have to use the differencing
+        parameter 'd' to remove the trend and make the data stationary and smooth
+        the variance and mean. It is important becasue an accurate prediction can 
+        only be made for stationary series, since the data are otherwise randomly 
+        distributed and randomness cannot be forecasted.
 
         The order of the autoregressive (AR) component parameter 'p' is set to 20.
         The degree of differencing (I) parameter 'd' is set to 2.
@@ -615,7 +620,6 @@ class Group01:
             my_object.predictor(['United States', 'China', 'India'])
 
         """
-        import warnings
         warnings.filterwarnings('ignore')
 
         if not isinstance(countries, list):
