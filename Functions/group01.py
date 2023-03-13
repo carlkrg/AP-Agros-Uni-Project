@@ -34,8 +34,11 @@ plot_country_chart(args: Union[list[str], str]):
 gapminder_plot(year: int):
     Visualize Gapminder data for a specific year.
 
-def choropleth(self, year: int) -> None:
-        Plots a choropleth map of the total factor productivity (tfp) for the given year
+choropleth(self, year: int) -> None:
+    Plots a choropleth map of the total factor productivity (tfp) for the given year
+
+predictor
+
 
 Example usage:
 --------------
@@ -101,8 +104,11 @@ class Group01:
     gapminder_plot(year: int):
         Visualize Gapminder data for a specific year.
 
-    def choropleth(self, year: int) -> None:
-            Plots a choropleth map of the total factor productivity (tfp) for the given year
+    choropleth(self, year: int) -> None:
+        Plots a choropleth map of the total factor productivity (tfp) for the given year
+    
+    predictor(self, countries: list) -> None:
+        Predicts the total factor productivity (tfp) by year for the given countries up to three until the year 2050.
     """
 
     def __init__(self, name: str):
@@ -567,8 +573,17 @@ class Group01:
         Plots the Total Factor Productivity (TFP) of the given countries and predicts TFP up to 2050 using ARIMA.
         Arima is used instead of SARIMAX because it was no seasonality in the data.
         It was checked by plotting ACF and PACF plots and by checking the seasonal decomposition plot.
+        It is oserved by the autocorrelation that the time series of the data does show a long-term trend 
+        or systematic patterns that could affect its statistical properties. Thats why we have to use the differencing 
+        parameter 'd' to remove the trend and make the data stationary and smooth the variance and mean.
+        It is important becasue an accurate prediction can only be made for stationary series, 
+        since the data are otherwise randomly distributed and randomness cannot be forecasted.
 
-        Args:
+        The order of the autoregressive (AR) component parameter 'p' is set to 20.
+        The degree of differencing (I) parameter 'd' is set to 2.
+        The order of the moving average (MA) component parameter 'q' is set to 2.
+
+        Parameters:
             countries (list): A list of up to three country names to plot.
 
         Raises:
@@ -585,6 +600,9 @@ class Group01:
             my_object.predictor(['United States', 'China', 'India'])
 
         """
+        import warnings
+        warnings.filterwarnings('ignore')
+
         if not isinstance(countries, list):
             raise TypeError('No valid type as an argument. Please insert the names of countries as a list into the method.')
         
