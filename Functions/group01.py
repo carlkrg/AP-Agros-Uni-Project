@@ -38,7 +38,8 @@ choropleth(self, year: int) -> None:
     Plots a choropleth map of the total factor productivity (tfp) for the given year
 
 predictor(self, countries: list) -> None:
-    Predicts the total factor productivity (tfp) by year for the given countries up to three until the year 2050.
+    Predicts the total factor productivity (tfp) by year for the given countries
+    up to three until the year 2050.
 
 
 Example usage:
@@ -55,18 +56,15 @@ Example usage:
 """
 
 import os
-from typing import Union
+import warnings
+from typing import Optional, Union
 import pandas as pd
 import requests
 import numpy as np
 import seaborn as sns
 from matplotlib import pyplot as plt
-from typing import Optional
 import geopandas as gpd
 from statsmodels.tsa.arima.model import ARIMA
-import warnings
-
-
 
 
 class Group01:
@@ -110,14 +108,25 @@ class Group01:
         Plots a choropleth map of the total factor productivity (tfp) for the given year
 
     predictor(self, countries: list) -> None:
-        Predicts the total factor productivity (tfp) by year for the given countries up to three until the year 2050.
+        Predicts the total factor productivity (tfp) by year for the given
+        countries up to three until the year 2050.
     """
 
-    merge_dict = {'Bosnia and Herzegovina': 'Bosnia and Herz.', 'Burma': 'Myanmar', 'Eswatini': 'eSwatini',
-              'United States': 'United States of America', 'North Macedonia': 'Macedonia',
-              'Dominican Republic': 'Dominican Rep.', 'Equatorial Guinea': 'Eq. Guinea', 'South Sudan': 'S. Sudan',
-              'Democratic Republic of Congo': 'Dem. Rep. Congo', 'Solomon Islands': 'Solomon Is.', 'Timor': 'Timor-Leste',
-              'Central African Republic': 'Central African Rep.', 'Macedonia': 'North Macedonia'}
+    merge_dict = {
+        "Bosnia and Herzegovina": "Bosnia and Herz.",
+        "Burma": "Myanmar",
+        "Eswatini": "eSwatini",
+        "United States": "United States of America",
+        "North Macedonia": "Macedonia",
+        "Dominican Republic": "Dominican Rep.",
+        "Equatorial Guinea": "Eq. Guinea",
+        "South Sudan": "S. Sudan",
+        "Democratic Republic of Congo": "Dem. Rep. Congo",
+        "Solomon Islands": "Solomon Is.",
+        "Timor": "Timor-Leste",
+        "Central African Republic": "Central African Rep.",
+        "Macedonia": "North Macedonia",
+    }
 
     def __init__(self, name: str):
         """
@@ -127,13 +136,8 @@ class Group01:
             name: str, name of the object.
         """
         self.name = name
-        self.df = None  # Initialize self.df as None.
+        self.df = None
         self.df_geographical = None
-        '''self.merge_dict = {'Bosnia and Herzegovina': 'Bosnia and Herz.', 'Burma': 'Myanmar', 'Eswatini': 'eSwatini',
-              'United States': 'United States of America', 'North Macedonia': 'Macedonia',
-              'Dominican Republic': 'Dominican Rep.', 'Equatorial Guinea': 'Eq. Guinea', 'South Sudan': 'S. Sudan',
-              'Democratic Republic of Congo': 'Dem. Rep. Congo', 'Solomon Islands': 'Solomon Is.', 'Timor': 'Timor-Leste',
-              'Central African Republic': 'Central African Rep.', 'Macedonia': 'North Macedonia'}'''
 
     def get_data(self) -> None:
         """
@@ -189,27 +193,56 @@ class Group01:
             self.df = pd.read_csv(
                 "downloads/data.csv"
             )  # read the data into a pandas dataframe
-            aggregated_columns = ('Caribbean','Central Africa', 'Central African Republic',
-                          'Central America','Central Asia', 'Central Europe','Czechoslovakia',
-                          'Developed Asia','Developed countries', 'Former Soviet Union','High income',
-                          'Horn of Africa','Latin America and the Caribbean','Least developed countries',
-                          'Low income', 'Lower-middle income','North Africa','Northeast Asia','Northern Europe', 'South Asia',
-                          'Southeast Asia', 'Southern Africa', 'Southern Europe','Sub-Saharan Africa',
-                          'Upper-middle income','West Africa' ,'West Asia', 'Western Europe' ,'World', 'Yugoslavia')
-            self.df = self.df[~self.df['Entity'].isin(aggregated_columns)]
+            aggregated_columns = (
+                "Caribbean",
+                "Central Africa",
+                "Central African Republic",
+                "Central America",
+                "Central Asia",
+                "Central Europe",
+                "Czechoslovakia",
+                "Developed Asia",
+                "Developed countries",
+                "Former Soviet Union",
+                "High income",
+                "Horn of Africa",
+                "Latin America and the Caribbean",
+                "Least developed countries",
+                "Low income",
+                "Lower-middle income",
+                "North Africa",
+                "Northeast Asia",
+                "Northern Europe",
+                "South Asia",
+                "Southeast Asia",
+                "Southern Africa",
+                "Southern Europe",
+                "Sub-Saharan Africa",
+                "Upper-middle income",
+                "West Africa",
+                "West Asia",
+                "Western Europe",
+                "World",
+                "Yugoslavia",
+            )
+            self.df = self.df[~self.df["Entity"].isin(aggregated_columns)]
 
-        if os.path.exists("downloads/data_geographical.csv"):  # check if the data file exists
+        if os.path.exists(
+            "downloads/data_geographical.csv"
+        ):  # check if the data file exists
             print("data_geographical file already exists")
         else:
             print("downloading data_geographical file...")
-            df_geographical = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
+            df_geographical = gpd.read_file(
+                gpd.datasets.get_path("naturalearth_lowres")
+            )
             df_geographical.to_csv("downloads/data_geographical.csv")
 
         if self.df_geographical is None:
             print("reading data_geographical file into pandas geo dataframe...")
-            self.df_geographical = gpd.read_file(gpd.datasets.get_path('naturalearth_lowres'))
-
-
+            self.df_geographical = gpd.read_file(
+                gpd.datasets.get_path("naturalearth_lowres")
+            )
 
     def get_countries(self) -> list:
         """
@@ -251,7 +284,8 @@ class Group01:
         name ends with '_quantity', the name is appended to the 'plotted_columns' list.
 
         Finally, the method calls the 'heatmap()' function from the seaborn library on the
-        'plotted_columns' data in the DataFrame, and displays the lower triangle heatmap plot using 'plt.show()'.
+        'plotted_columns' data in the DataFrame, and displays the lower triangle
+        heatmap plot using 'plt.show()'.
 
         Parameters:
             None
@@ -283,7 +317,6 @@ class Group01:
         plt.figure(figsize=(10, 8))
         sns.set(font_scale=1.2)
 
-
         # Getting the lower Triangle of the correlation matrix
         matrix = np.triu(self.df[plotted_columns].corr())
 
@@ -293,107 +326,119 @@ class Group01:
             annot=True,
             cmap="crest",
             cbar_kws={"label": "Correlation Coefficient"},
-            mask=matrix
+            mask=matrix,
         )
 
         # Set the plot title and show the plot
         plt.title("Correlation between Quantity Columns")
         # Add the source of the data as a subtitle
         fig = plt.gcf()
-        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.2)
+        fig.suptitle(
+            "Source: Agricultural total factor productivity (USDA), OWID",
+            fontsize=10,
+            y=-0.2,
+        )
         # Show the plot
         plt.show()
 
+    def plot_area_chart(
+        self,
+        country: Optional[str] = None,
+        normalize: bool = False,
+        optional: Optional[str] = None,
+    ) -> None:
+        """
+        Plots an area chart of the distinct "_output_" columns for the given country or all
+        countries if `country` is set to "World" or None. The columns are normalized by the total
+        output if the `normalize` parameter is set to True.
 
-    def plot_area_chart(self, country: Optional[str] = None, normalize: bool = False, optional: Optional[str] = None) -> None:
-            """
-            Plots an area chart of the distinct "_output_" columns for the given country or all
-            countries if `country` is set to "World" or None. The columns are normalized by the total
-            output if the `normalize` parameter is set to True.
+        If the dataframe is not available, the method will first call the `get_data` method to
+        download and read the dataset into the `df` attribute.
 
-            If the dataframe is not available, the method will first call the `get_data` method to
-            download and read the dataset into the `df` attribute.
+        Parameters:
+        country (str, optional):
+            The country to plot the data for. If set to "World" or None,
+            the data for all countries will be plotted.
 
-            Parameters:
-            country (str, optional):
-                The country to plot the data for. If set to "World" or None,
-                the data for all countries will be plotted.
+        normalize : bool
+            If set to True, the data will be normalized by the total output.
 
-            normalize : bool
-                If set to True, the data will be normalized by the total output.
+        Raises:
+            TypeError: If the `country` parameter is not a string or the `normalize`
+            parameter is not a bool
 
-            Raises:
-                TypeError: If the `country` parameter is not a string or the `normalize`
-                parameter is not a bool
+            Exception: If one or less columns with the "_output_" suffix are available or if the
+            given country does not exist
 
-                Exception: If one or less columns with the "_output_" suffix are available or if the
-                given country does not exist
+        Returns:
+            None
 
-            Returns:
-                None
+        Example usage:
+            my_object = Group01("my_object")
+            my_object.plot_area_chart("World", True)
+        """
 
-            Example usage:
-                my_object = Group01("my_object")
-                my_object.plot_area_chart("World", True)
-            """
+        if country is not None and not isinstance(country, str):
+            raise TypeError("country is not a string, Please pass a string")
 
-            if country is not None and not isinstance(country, str):
-                raise TypeError("country is not a string, Please pass a string")
+        if not isinstance(normalize, bool):
+            raise TypeError("normalize is not a bool, Please pass a bool")
 
-            if not isinstance(normalize, bool):
-                raise TypeError("normalize is not a bool, Please pass a bool")
+        if self.df is None:
+            self.get_data()
 
-            if self.df is None:
-                self.get_data()
+        # Get all columns with "_quantity" suffix and check if there are enough columns
+        column_names = self.df.columns.tolist()
+        df_subset = [c for c in column_names if "_output_" in c]
+        df_subset.append("Year")
+        if len(df_subset) < 2:
+            raise Exception("Not enough columns with '_output' suffix")
 
-            # Get all columns with "_quantity" suffix and check if there are enough columns
-            column_names = self.df.columns.tolist()
-            df_subset = [c for c in column_names if "_output_" in c]
-            df_subset.append("Year")
-            if len(df_subset) < 2:
-                raise Exception("Not enough columns with '_output' suffix")
-
-            # Plotting function
-            def country_plot(df_temp):
-                norm = ""
-                if normalize:
-                    df_temp["Total"] = (df_temp.iloc[:, :-1]).sum(axis=1)
-                    df_temp.iloc[:, :-2] = (
-                        df_temp.iloc[:, :-2].div(df_temp.Total, axis=0) * 100
-                    )
-                    norm = "% (Normalized)"
-                list_outputs = []
-                list_labels = []
-                for each in df_subset[:-1]:
-                    list_outputs.append(df_temp[each])
-                    list_labels.append(each)
-                plt.stackplot(df_temp.Year, list_outputs, labels=list_labels)
-                plt.set_cmap("Pastel1")
-                plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
-                plt.tick_params(labelsize=12)
-                plt.title("Consumption of agricultural products by country over time, O")
-                # Add the source of the data as a subtitle
-                fig = plt.gcf()
-                fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
-                plt.xlabel("Year", size=12)
-                plt.ylabel(("Counsumption" + norm), size=12)
-                plt.ylim(bottom=0)
-                # Show the plot
-                plt.show()
-
-            # Plotting for all countries or a specific country
-            if country in (None, "World"):
-                df_temp = self.df[df_subset].groupby("Year").sum().reset_index()
-                df_temp = df_temp.reindex(
-                    columns=list(df_temp.columns[1:]) + [df_temp.columns[0]]
+        # Plotting function
+        def country_plot(df_temp):
+            norm = ""
+            if normalize:
+                df_temp["Total"] = (df_temp.iloc[:, :-1]).sum(axis=1)
+                df_temp.iloc[:, :-2] = (
+                    df_temp.iloc[:, :-2].div(df_temp.Total, axis=0) * 100
                 )
-                country_plot(df_temp)
-            elif country in self.get_countries():
-                df_temp = self.df[self.df["Entity"] == country]
-                df_temp = df_temp[df_subset]
-                country_plot(df_temp)
-            else:
-                raise TypeError("Country does not exist")
+                norm = "% (Normalized)"
+            list_outputs = []
+            list_labels = []
+            for each in df_subset[:-1]:
+                list_outputs.append(df_temp[each])
+                list_labels.append(each)
+            plt.stackplot(df_temp.Year, list_outputs, labels=list_labels)
+            plt.set_cmap("Pastel1")
+            plt.legend(loc="upper left", bbox_to_anchor=(1, 1))
+            plt.tick_params(labelsize=12)
+            plt.title("Consumption of agricultural products by country over time, O")
+            # Add the source of the data as a subtitle
+            fig = plt.gcf()
+            fig.suptitle(
+                "Source: Agricultural total factor productivity (USDA), OWID",
+                fontsize=10,
+                y=-0.05,
+            )
+            plt.xlabel("Year", size=12)
+            plt.ylabel(("Counsumption" + norm), size=12)
+            plt.ylim(bottom=0)
+            # Show the plot
+            plt.show()
+
+        # Plotting for all countries or a specific country
+        if country in (None, "World"):
+            df_temp = self.df[df_subset].groupby("Year").sum().reset_index()
+            df_temp = df_temp.reindex(
+                columns=list(df_temp.columns[1:]) + [df_temp.columns[0]]
+            )
+            country_plot(df_temp)
+        elif country in self.get_countries():
+            df_temp = self.df[self.df["Entity"] == country]
+            df_temp = df_temp[df_subset]
+            country_plot(df_temp)
+        else:
+            raise TypeError("Country does not exist")
 
     def plot_country_chart(self, args: Union[list[str], str]) -> None:
         """
@@ -454,7 +499,11 @@ class Group01:
         plt.title(title)
         # Add the source of the data as a subtitle
         fig = plt.gcf()
-        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
+        fig.suptitle(
+            "Source: Agricultural total factor productivity (USDA), OWID",
+            fontsize=10,
+            y=-0.05,
+        )
         plt.xlabel("Year")
         plt.ylabel("Total _output")
         # Show the plot
@@ -524,13 +573,17 @@ class Group01:
         plt.xlabel("fertilizer_quantity", fontsize=14)
         plt.ylabel("output_quantity", fontsize=14)
         plt.title(f"Gapminder agriculture - Year {year}", fontsize=20)
-         # Add the source of the data as a subtitle
+        # Add the source of the data as a subtitle
         fig = plt.gcf()
-        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
+        fig.suptitle(
+            "Source: Agricultural total factor productivity (USDA), OWID",
+            fontsize=10,
+            y=-0.05,
+        )
 
         if log_scale:
-            plt.xscale('log')
-            plt.yscale('log')
+            plt.xscale("log")
+            plt.yscale("log")
             plt.xlabel("fertilizer_quantity_log", fontsize=14)
             plt.ylabel("output_quantity_log", fontsize=14)
 
@@ -554,49 +607,61 @@ class Group01:
 
         Example usage:
             my_object.choropleth(2000)
-            """
+        """
         # Check that year is an integer
         if not isinstance(year, int):
             raise TypeError("Year must be an integer")
 
-        # Check if self.df or self.df_geographical attributes are None and call self.get_data() if necessary
+        # Check if self.df or self.df_geographical attributes are None and call
+        # self.get_data() if necessary
         if (self.df is None) or (self.df_geographical is None):
             self.get_data()
 
-        #Check if year is in the dataset
+        # Check if year is in the dataset
         if year not in self.df["Year"].values:
             raise ValueError("Year is not in the dataset")
 
         # Rename country in self.df according to merge_dict
-        self.df = self.df.replace({'Entity': Group01.merge_dict})
+        self.df = self.df.replace({"Entity": Group01.merge_dict})
 
         # Merge geographical and agricultural dataframe and filter by selected year
-        merged_df = self.df_geographical.merge(self.df, left_on='name', right_on='Entity', how='left')
-        merged_df = merged_df[merged_df['Year'] == year]
+        merged_df = self.df_geographical.merge(
+            self.df, left_on="name", right_on="Entity", how="left"
+        )
+        merged_df = merged_df[merged_df["Year"] == year]
 
         # Plot choropleth map of tfp
-        ax = merged_df.plot(column='tfp', legend=True, figsize=[20, 10], legend_kwds={'label': 'total factor productivity'})
-        ax.set_title(f'Total factor productivity in {year}')
+        ax = merged_df.plot(
+            column="tfp",
+            legend=True,
+            figsize=[20, 10],
+            legend_kwds={"label": "total factor productivity"},
+        )
+        ax.set_title(f"Total factor productivity in {year}")
         plt.xlabel("Longitude", fontsize=14)
         plt.ylabel("Latitude", fontsize=14)
         # Add the source of the data as a subtitle
         fig = plt.gcf()
-        fig.suptitle("Sources: Natural Earth powered by WordPress and Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
+        fig.suptitle(
+            "Sources: Natural Earth powered by WordPress and Agricultural total factor productivity (USDA), OWID",
+            fontsize=10,
+            y=-0.05,
+        )
         # Show the plot
         plt.show()
 
     def predictor(self, countries: list) -> None:
         """
         Plots the Total Factor Productivity (TFP) of the given countries
-        and predicts TFP up to 2050 using ARIMA. Arima is used instead of 
-        SARIMAX because it was no seasonality in the data. It was checked by 
-        plotting ACF and PACF plots and by checking the seasonal decomposition 
-        plot. It is oserved by the autocorrelation that the time series of the 
-        data does show a long-term trend or systematic patterns that could affect 
+        and predicts TFP up to 2050 using ARIMA. Arima is used instead of
+        SARIMAX because it was no seasonality in the data. It was checked by
+        plotting ACF and PACF plots and by checking the seasonal decomposition
+        plot. It is oserved by the autocorrelation that the time series of the
+        data does show a long-term trend or systematic patterns that could affect
         its statistical properties. Thats why we have to use the differencing
         parameter 'd' to remove the trend and make the data stationary and smooth
-        the variance and mean. It is important becasue an accurate prediction can 
-        only be made for stationary series, since the data are otherwise randomly 
+        the variance and mean. It is important becasue an accurate prediction can
+        only be made for stationary series, since the data are otherwise randomly
         distributed and randomness cannot be forecasted.
 
         The order of the autoregressive (AR) component parameter 'p' is set to 20.
@@ -620,20 +685,27 @@ class Group01:
             my_object.predictor(['United States', 'China', 'India'])
 
         """
-        warnings.filterwarnings('ignore')
+        warnings.filterwarnings("ignore")
 
         if not isinstance(countries, list):
-            raise TypeError('No valid type as an argument. Please insert the names of countries as a list into the method.')
+            raise TypeError(
+                "No valid type as an argument. Please insert the names of countries as a list into the method."
+            )
 
-        if self.df.empty:
-            raise ValueError('Agricultural data has not been loaded yet.')
-        available_countries = set(self.df['Entity'].unique())
+        if self.df is None:
+            self.get_data()  # check if df is available
+
+        available_countries = set(self.df["Entity"].unique())
 
         # Select the countries that are in the available countries
-        countries_to_use = [country for country in countries if country in available_countries]
+        countries_to_use = [
+            country for country in countries if country in available_countries
+        ]
         if not countries_to_use:
             # Raise an error if no valid countries are provided
-            raise ValueError(f"No valid countries provided. Available countries are: {', '.join(available_countries)}")
+            raise ValueError(
+                f"No valid countries provided. Available countries are: {', '.join(available_countries)}"
+            )
 
         if len(countries) > 3:
             # Raise an error if more than three countries are provided
@@ -643,19 +715,25 @@ class Group01:
 
         for country in countries_to_use:
             # Select the data for the current country
-            data = self.df[self.df['Entity'] == country]
+            data = self.df[self.df["Entity"] == country]
             # Extract the TFP and years values
-            tfp = data['tfp'].values
-            years = data['Year'].values
+            tfp = data["tfp"].values
+            years = data["Year"].values
             # Plot the TFP for the current country
             ax.plot(years, tfp, label=country)
             # Fit an ARIMA model to the TFP data for the current country
             model = ARIMA(tfp, order=(20, 2, 2))
             model_fit = model.fit()
             # Generate predictions for TFP up to 2050
-            predictions = model_fit.forecast(steps= 31)
+            predictions = model_fit.forecast(steps=31)
             # Plot the predicted TFP using a different line style
-            ax.plot(np.arange(years[-1], years[-1]+31), predictions, linestyle='--', color=ax.get_lines()[-1].get_color(), label=f"{country} (forecast)")
+            ax.plot(
+                np.arange(years[-1], years[-1] + 31),
+                predictions,
+                linestyle="--",
+                color=ax.get_lines()[-1].get_color(),
+                label=f"{country} (forecast)",
+            )
 
         # Set the title and legend for the plot
         ax.set_title("Total Factor Productivity (TFP) by Year")
@@ -664,6 +742,10 @@ class Group01:
         ax.legend()
         # Add the source of the data as a subtitle
         fig = plt.gcf()
-        fig.suptitle("Source: Agricultural total factor productivity (USDA), OWID", fontsize=10, y=-0.05)
+        fig.suptitle(
+            "Source: Agricultural total factor productivity (USDA), OWID",
+            fontsize=10,
+            y=-0.05,
+        )
         # Show the plot
         plt.show()
