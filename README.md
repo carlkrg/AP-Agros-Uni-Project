@@ -1,23 +1,12 @@
 # Welcome to project Agros
 
+This project was developed as part of the "Advanced Programming" course at the Nova School of Business and Economics. The main goal of the course was to teach students about ensuring code quality and how to work professionally in a team on a programming project.
+
 ## TEAM: 
 - Carl Krogmann     
-    - 55361
-    - 55361@novasbe.pt
-    - carl.krogmann@hotmail.com
 - Leon Kahrig
-    - 55584
-    - 55584@novasbe.pt
-    - leonkahrig@web.de
 - Meeka Lenisa
-    - 56025
-    - 56025@novasbe.pt
-    - 118310340+meekalenisa@users.noreply.github.com
 - Jannis Schmid
-    - 54616
-    - 54616@novasbe.pt
-    - jannishsgph@gmail.com
-
 ---
 ## Scenario
 
